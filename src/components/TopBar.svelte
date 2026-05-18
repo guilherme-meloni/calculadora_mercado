@@ -6,7 +6,7 @@
 
 <div class="topbar">
   <div>
-    <div class="eye">{activeList ? activeList.name : 'Mercado'}</div>
+    <div class="eye">{activeList ? activeList.name : 'Minhas compras'}</div>
     <div class="title">Calculadora 🛒</div>
   </div>
   <div class="badge">
@@ -23,36 +23,48 @@
     justify-content: space-between;
     margin-bottom: 22px;
   }
+
   .eye {
     font-size: 10px;
     font-weight: 700;
-    letter-spacing: 0.2em;
+    letter-spacing: 0.18em;
     text-transform: uppercase;
-    color: var(--accent2);
+    color: var(--accent2);   /* verde feira */
     margin-bottom: 3px;
   }
+
   .title {
     font-size: 24px;
     font-weight: 800;
-    letter-spacing: -0.03em;
+    letter-spacing: -0.02em;
+    color: var(--text);
   }
+
   .badge {
     display: flex;
     align-items: center;
     gap: 6px;
-    background: var(--surface2);
-    border: 1px solid var(--border2);
+    background: #FFF0F5;
+    border: 1.5px solid var(--border);
     border-radius: 20px;
-    padding: 6px 12px;
+    padding: 6px 13px;
     font-size: 12px;
-    font-weight: 600;
+    font-weight: 700;
     color: var(--text2);
     font-variant-numeric: tabular-nums;
   }
+
   .dot {
-    width: 6px; height: 6px;
+    width: 6px;
+    height: 6px;
     border-radius: 50%;
-    background: var(--green);
-    box-shadow: 0 0 6px var(--green);
+    background: var(--accent);
+    /* pulsa suavemente pra dar vida */
+    animation: pulse 2.4s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1;   transform: scale(1);    }
+    50%       { opacity: 0.5; transform: scale(0.75); }
   }
 </style>

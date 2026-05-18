@@ -44,7 +44,8 @@
 
   <div class="lists-grid">
     {#each $appStore.lists as list (list.id)}
-      <div
+      <button
+        type="button"
         class="list-card"
         class:active={list.id === $appStore.activeId}
         on:click={() => handleSwitch(list.id)}
@@ -54,9 +55,9 @@
           <div class="list-meta">{list.items.length} itens</div>
         </div>
         {#if $appStore.lists.length > 1}
-          <button class="btn-del" on:click|stopPropagation={() => handleDelete(list.id, list.name)}>✕</button>
+          <button type="button" class="btn-del" on:click|stopPropagation={() => handleDelete(list.id, list.name)}>✕</button>
         {/if}
-      </div>
+      </button>
     {/each}
   </div>
 </div>
@@ -138,6 +139,11 @@
     cursor: pointer;
     position: relative;
     transition: all 0.2s;
+    /* Reset button styles */
+    display: block;
+    width: 140px;
+    text-align: left;
+    font-family: inherit;
   }
   .list-card.active {
     border-color: var(--accent);
