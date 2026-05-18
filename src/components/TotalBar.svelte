@@ -1,5 +1,5 @@
 <script>
-  import { items } from '../lib/store.js'
+  import { items, itemsActions } from '../lib/store.js'
   import { formatBRL } from '../lib/utils.js'
 
   $: total = $items.reduce((a, i) => a + i.preco * i.qty, 0)
@@ -21,7 +21,7 @@
           <span class="pill-lbl">Itens</span>
           <span class="pill-val">{count}</span>
         </div>
-        <button class="btn-clear" on:click={() => items.clear()}>Limpar</button>
+        <button class="btn-clear" on:click={() => itemsActions.clear()}>Limpar</button>
       </div>
     {/if}
   </div>

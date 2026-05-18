@@ -1,5 +1,5 @@
 <script>
-  import { items } from '../lib/store.js'
+  import { itemsActions } from '../lib/store.js'
   import { formatBRL } from '../lib/utils.js'
 
   export let item
@@ -14,12 +14,12 @@
     <div class="unit">{formatBRL(item.preco)} / un</div>
   </div>
   <div class="qty-wrap">
-    <button class="qty minus" on:click={() => items.changeQty(item.id, -1)}>−</button>
+    <button class="qty minus" on:click={() => itemsActions.changeQty(item.id, -1)}>−</button>
     <span class="qty-num">{item.qty}</span>
-    <button class="qty plus" on:click={() => items.changeQty(item.id, +1)}>+</button>
+    <button class="qty plus" on:click={() => itemsActions.changeQty(item.id, +1)}>+</button>
   </div>
   <span class="sub">{formatBRL(subtotal)}</span>
-  <button class="del" on:click={() => items.remove(item.id)}>✕</button>
+  <button class="del" on:click={() => itemsActions.remove(item.id)}>✕</button>
 </div>
 
 <style>

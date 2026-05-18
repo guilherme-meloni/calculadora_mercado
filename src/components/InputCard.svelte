@@ -1,5 +1,5 @@
 <script>
-  import { items } from '../lib/store.js'
+  import { itemsActions } from '../lib/store.js'
   import { parsePrice } from '../lib/utils.js'
 
   const CATS = ['🥩','🥬','🥛','🧴','🍞','🧃','🛒']
@@ -16,7 +16,7 @@
       setTimeout(() => shake = false, 450)
       return
     }
-    items.add(nome.trim(), p, selCat)
+    itemsActions.add(nome.trim(), p, selCat)
     nome = ''
     preco = ''
   }

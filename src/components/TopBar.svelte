@@ -1,11 +1,12 @@
 <script>
-  import { items } from '../lib/store.js'
+  import { appStore, items } from '../lib/store.js'
   $: count = $items.length
+  $: activeList = $appStore.lists.find(l => l.id === $appStore.activeId)
 </script>
 
 <div class="topbar">
   <div>
-    <div class="eye">Mercado</div>
+    <div class="eye">{activeList ? activeList.name : 'Mercado'}</div>
     <div class="title">Calculadora 🛒</div>
   </div>
   <div class="badge">
