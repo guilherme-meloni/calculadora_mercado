@@ -1,117 +1,147 @@
-📝 Sobre o Projeto
+<div align="center">
 
-A Calculadora de Compras de Mercado é uma aplicação web moderna e ultra-rápida, desenvolvida no formato Single Page Application (SPA). Ela foi projetada para substituir as listas de papel ou blocos de notas tradicionais, trazendo inteligência, clareza visual e controle financeiro direto para o seu navegador.
+<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=700&size=30&pause=1000&color=22C55E&center=true&vCenter=true&width=600&lines=🛒+Calculadora+de+Mercado;Lista+inteligente+no+seu+navegador;Zero+papel.+Zero+surpresas+no+caixa." alt="Typing SVG" />
 
-💡 Por que esta calculadora é diferente?
+<br/>
 
-Visualização Baseada em Blocos (Cards): Esqueça as listas monótonas. Cada produto adicionado funciona como um bloco interativo completo, organizando visualmente suas compras.
+[![Svelte](https://img.shields.io/badge/Svelte-5-FF3E00?style=for-the-badge&logo=svelte&logoColor=white)](https://svelte.dev/)
+[![Vite](https://img.shields.io/badge/Vite-Build-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
+[![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
+[![Nginx](https://img.shields.io/badge/Nginx-Serve-009639?style=for-the-badge&logo=nginx&logoColor=white)](https://nginx.org/)
+[![JavaScript](https://img.shields.io/badge/JavaScript-ES_Modules-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
 
-Percepção e Controle de Gastos: Insira o preço unitário e ajuste a quantidade instantaneamente através dos botões + e -. O valor de cada item e o somatório geral do carrinho são recalculados em tempo real, permitindo que você identifique na hora o que está pesando mais no orçamento.
+<br/>
 
-Múltiplas Listas para Casais e Parcerias: Crie e salve listas independentes. Ficou muito mais fácil planejar a feira a dois ou separar as contas (ex: "Lista do Mês", "Churrasco com os Amigos", "Feira Semanal"). Faça as compras de forma transparente e sem surpresas no caixa.
+> **Chega de lista no papel. Controle seus gastos em tempo real, crie múltiplas listas e nunca mais leve susto no caixa.**
 
-🛠️ Stack Tecnológica
+<br/>
 
-Framework: Svelte
+---
 
-Diferencial: Diferente do React ou Vue, o Svelte não utiliza um "Virtual DOM". Ele compila o código em JavaScript puro altamente otimizado diretamente no momento do build, proporcionando performance excelente e carregamento instantâneo.
+</div>
 
-Ferramenta de Build: Vite — Garante um fluxo de desenvolvimento ágil com Hot Module Replacement (HMR) e empacotamento ideal.
+## ✨ Por que esta calculadora é diferente?
 
-Linguagem: JavaScript (ES Modules).
+Não é mais uma lista de compras. É uma ferramenta de **controle financeiro real**, pensada para o dia a dia brasileiro.
 
-Servidor & Deploy: Nginx e Docker — Infraestrutura moderna para rodar a aplicação em containers isolados e de alta performance.
+| 🃏 Cards Interativos | 💰 Controle em Tempo Real | 👫 Múltiplas Listas |
+|---|---|---|
+| Cada produto vira um bloco visual completo. Esqueça as listas monótonas. | Ajuste quantidades com `+` e `−`. O total recalcula na hora — você sabe exatamente o que está pesando no orçamento antes de chegar no caixa. | Crie listas independentes: *Feira Semanal*, *Churrasco com os Amigos*, *Compras do Mês*. Perfeito para casais e parceiros. |
 
-🏗️ Arquitetura do Projeto
+---
 
-A estrutura foi planejada de forma modular. Cada componente Svelte (.svelte) reúne sua própria marcação (HTML), estilo (CSS) e lógica (JS), facilitando a manutenção.
+## 🚀 Stack Tecnológica
 
-├── src/
-│   ├── components/      # Componentes visuais (TopBar, InputCard, ItemList, etc.)
-│   ├── lib/             # Lógica de negócio e gerenciamento de estado global
-│   │   └── store.js     # O coração do app: Svelte Stores e persistência de dados
-│   └── App.svelte       # Componente raiz que organiza e orquestra a aplicação
-├── nginx.conf           # Configuração personalizada para servir a SPA no Nginx
-├── Dockerfile           # Instruções para criação da imagem de produção
-└── docker-compose.yml   # Orquestração do container de forma simplificada
+```
+⚡ Svelte      → Sem Virtual DOM. Compila direto pra JS puro. Rápido pra caramba.
+🔥 Vite        → Build ultra-rápido com Hot Module Replacement (HMR).
+🐋 Docker      → Container isolado. Sobe em segundos em qualquer servidor.
+⚙️  Nginx       → Serve os arquivos estáticos com mínimo consumo de memória.
+📦 LocalStorage → Suas listas ficam salvas no navegador. Sem backend. Sem cadastro.
+```
 
+---
 
-🧠 Lógica e Gerenciamento de Estado
+## 🏗️ Arquitetura do Projeto
 
-Toda a inteligência e o fluxo de reatividade residem no arquivo src/lib/store.js:
+```
+📁 calculadora-mercado/
+│
+├── 📁 src/
+│   ├── 📁 components/        # TopBar, InputCard, ItemList e outros blocos visuais
+│   ├── 📁 lib/
+│   │   └── 📄 store.js       # ❤️ O coração do app — Svelte Stores + LocalStorage
+│   └── 📄 App.svelte         # Componente raiz que orquestra tudo
+│
+├── 📄 nginx.conf             # Roteamento SPA (evita 404 no refresh)
+├── 📄 Dockerfile             # Imagem de produção otimizada
+└── 📄 docker-compose.yml     # Sobe o container com um comando só
+```
 
-Reatividade com Svelte Stores: O estado da aplicação (suas listas, itens e ID da lista ativa) é guardado em writable stores. Qualquer alteração reflete imediatamente na tela, eliminando a manipulação manual e lenta do DOM.
+---
 
-Persistência com LocalStorage: Através da inscrição (subscribe) automática na store, todas as alterações são convertidas em JSON e guardadas no navegador. A função loadData garante que suas listas antigas estejam lá sempre que você abrir a página.
+## 🧠 Como a Lógica Funciona
 
-Estado Derivado (Derived Store): A lista de itens exibida na tela utiliza o conceito de derived store, monitorando qual lista está ativa (activeId) para filtrar e expor apenas os dados correspondentes, reduzindo o processamento nos componentes de visualização.
+Toda a inteligência mora em **`src/lib/store.js`**.
 
-🔄 Fluxo de Dados (Data Flow)
+**Reatividade com Svelte Stores**
+O estado (listas, itens, lista ativa) vive em `writable stores`. Qualquer mudança reflete instantaneamente na tela — sem manipulação manual de DOM.
 
-O ciclo de vida das interações na aplicação segue um modelo unidirecional e previsível:
+**Persistência Automática com LocalStorage**
+Cada alteração é serializada em JSON e salva no navegador via `subscribe`. Ao abrir o app novamente, `loadData` restaura tudo exatamente como estava.
 
-┌─────────────────────────┐     Invocação de função
-│  Interação do Usuário   ├──────────────────────────┐
-│  (Ajuste de quantidade) │                          │
-└─────────────────────────┘                          ▼
-             ▲                                ┌──────────────┐
-             │ Re-renderiza                   │     Ação     │
-             │ o DOM                          │ (addListItem)│
-┌────────────┴────────────┐                   └──────┬───────┘
-│       Reatividade       │                          │
-│     (Svelte Stores)     │                          ▼
-└─────────────────────────┘                  ┌──────────────┐
-             ▲                               │ Atualização  │
-             │ Lê estado atualizado          │ (State Mut.) │
-┌────────────┴────────────┐                  └──────┬───────┘
-│      Persistência       │                          │
-│     (LocalStorage)      │◄─────────────────────────┘
-└─────────────────────────┘     Salva automaticamente
+**Estado Derivado (Derived Store)**
+A lista exibida na tela usa um `derived store` que monitora qual lista está ativa (`activeId`) e filtra apenas os itens correspondentes — mantendo os componentes leves e focados.
 
+### 🔄 Fluxo de Dados
 
-🐋 Infraestrutura e Produção (Docker + Nginx)
+```
+  Usuário ajusta quantidade
+          │
+          ▼
+    Invoca função
+   (ex: addListItem)
+          │
+          ▼
+   Atualiza o State
+   (Svelte Store)
+          │
+          ├──────────────────────────────────┐
+          ▼                                  ▼
+  Re-renderiza o DOM                 Salva no LocalStorage
+  (reatividade automática)           (subscribe automático)
+```
 
-Os arquivos docker-compose.yml e nginx.conf garantem que você consiga implantar o app em segundos em qualquer VPS ou servidor:
+---
 
-Compilação Estática: O Docker executa o npm run build interno, gerando arquivos de produção otimizados na pasta dist/.
+## 🐋 Deploy com Docker (Produção)
 
-Nginx de Alta Velocidade: O servidor Nginx serve essa pasta estática com o menor uso de memória possível.
+Sobe tudo com **um único comando**:
 
-Roteamento SPA: O nginx.conf possui a diretiva try_files apontando para o index.html. Isso evita que rotas virtuais da aplicação quebrem ou deem erro 404 Not Found quando a página é atualizada no navegador do usuário.
+```bash
+docker-compose up -d --build
+```
 
-🚀 Como Executar o Projeto
+Acesse em: **http://localhost:80**
 
-📋 Pré-requisitos
+O que acontece por baixo dos panos:
+- O Docker executa `npm run build` internamente
+- Gera os arquivos estáticos otimizados em `dist/`
+- O Nginx serve essa pasta com consumo mínimo de memória
+- O `try_files` no `nginx.conf` garante que rotas virtuais da SPA nunca quebrem com 404
 
-Ter o Node.js instalado para desenvolvimento local, ou o Docker configurado para produção.
+---
 
-💻 Modo de Desenvolvimento Local (Sem Docker)
+## 💻 Desenvolvimento Local
 
-Clone o repositório para o seu computador:
+**Pré-requisito:** Node.js instalado.
 
-git clone [https://github.com/seu-usuario/sua-calculadora.git](https://github.com/seu-usuario/sua-calculadora.git)
-cd sua-calculadora
+```bash
+# 1. Clone o repositório
+git clone https://github.com/seu-usuario/calculadora-mercado.git
+cd calculadora-mercado
 
-
-Instale todas as dependências do projeto:
-
+# 2. Instale as dependências
 npm install
 
-
-Inicie o servidor local do Vite:
-
+# 3. Rode o servidor de desenvolvimento
 npm run dev
+```
 
+Abra **http://localhost:5173** e divirta-se. 🎉
 
-Pronto! Abra o seu navegador no endereço: http://localhost:5173
+---
 
-🐳 Modo Produção com Docker Compose
+## 📄 Licença
 
-Para rodar a aplicação em containers isolados simulando um ambiente de produção real:
+Distribuído sob a licença MIT. Veja `LICENSE` para mais informações.
 
-Monte a imagem e levante o container em segundo plano:
+---
 
-docker-compose up -d --build
+<div align="center">
 
+Feito com ☕ e muito `svelte store` por **você**
 
-Acesse a aplicação diretamente no seu navegador na porta configurada (geralmente http://localhost:80 ou http://localhost:8080).
+⭐ Se esse projeto te ajudou, deixa uma estrelinha — significa muito!
+
+</div>
