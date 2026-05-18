@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  calculadora:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: calculadora-mercado
+    restart: unless-stopped
+    ports:
+      - "3019:80"
+    environment:
+      - NODE_ENV=production
