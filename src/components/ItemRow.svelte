@@ -1,23 +1,131 @@
 <script>
   import { itemsActions } from '../lib/store.js'
-  import { formatBRL } from '../lib/utils.js'
+  import { formatBRL, parsePrice } from '../lib/utils.js'
 
   export let item
+  export let isTemplate = false
 
   $: subtotal = item.preco * item.qty
+
+  let editingPrice = false
+  let tempPrice = ''
+  let priceInput
+
+  let editingQty = false
+  let tempQty = ''
+  let qtyInput
+
+  function startEditPrice() {
+    if (isTemplate) return
+    tempPrice = item.preco.toString().replace('.', ',')
+    editingPrice = true
+    setTimeout(() => priceInput?.focus(), 50)
+  }
+
+  function savePrice() {
+    const p = parsePrice(tempPrice)
+    if (p >= 0) {
+      itemsActions.editPrice(item.id, p)
+    }
+    editingPrice = false
+  }
+
+  function startEditQty() {
+    if (isTemplate) return
+    tempQty = item.qty.toString()
+    editingQty = true
+    setTimeout(() => qtyInput?.focus(), 50)
+  }
+
+  function saveQty() {
+    const q = parseInt(tempQty)
+    if (!isNaN(q)) {
+      itemsActions.editQty(item.id, q)
+    }
+    editingQty = false
+  }
+
+  function onKeyPrice(e) {
+    if (e.key === 'Enter') savePrice()
+    if (e.key === 'Escape') editingPrice = false
+  }
+
+  function onKeyQty(e) {
+    if (e.key === 'Enter') saveQty()
+    if (e.key === 'Escape') editingQty = false
+  }
+
+  let longPressTimer
+  function startLongPress() {
+    longPressTimer = setTimeout(startEditQty, 600)
+  }
+  function cancelLongPress() {
+    clearTimeout(longPressTimer)
+  }
 </script>
 
-<div class="item">
+<div class="item" class:checked={item.checked && !isTemplate} class:is-template={isTemplate}>
+  {#if !isTemplate}
+    <button 
+      class="check-btn" 
+      class:is-checked={item.checked}
+      on:click={() => itemsActions.toggleChecked(item.id)}
+      aria-label="Marcar como pego"
+    >
+      <div class="check-inner">
+        {#if item.checked}✓{/if}
+      </div>
+    </button>
+  {/if}
+
   <div class="ico">{item.cat}</div>
+  
   <div class="body">
     <div class="name">{item.nome}</div>
-    <div class="unit">{formatBRL(item.preco)} / un</div>
+    <div class="unit" on:click={startEditPrice}>
+      {#if editingPrice}
+        <input
+          bind:this={priceInput}
+          type="text"
+          inputmode="decimal"
+          bind:value={tempPrice}
+          on:blur={savePrice}
+          on:keydown={onKeyPrice}
+          class="inline-input"
+        />
+      {:else}
+        <span class="price-link">{formatBRL(item.preco)} / un</span>
+      {/if}
+    </div>
   </div>
+
   <div class="qty-wrap">
     <button class="qty minus" on:click={() => itemsActions.changeQty(item.id, -1)}>−</button>
-    <span class="qty-num">{item.qty}</span>
+    <div 
+      class="qty-val" 
+      on:mousedown={startLongPress} 
+      on:mouseup={cancelLongPress}
+      on:touchstart={startLongPress}
+      on:touchend={cancelLongPress}
+      on:dblclick={startEditQty}
+    >
+      {#if editingQty}
+        <input
+          bind:this={qtyInput}
+          type="number"
+          inputmode="numeric"
+          bind:value={tempQty}
+          on:blur={saveQty}
+          on:keydown={onKeyQty}
+          class="inline-input qty-input"
+        />
+      {:else}
+        <span class="qty-num">{item.qty}</span>
+      {/if}
+    </div>
     <button class="qty plus" on:click={() => itemsActions.changeQty(item.id, +1)}>+</button>
   </div>
+
   <span class="sub">{formatBRL(subtotal)}</span>
   <button class="del" on:click={() => itemsActions.remove(item.id)}>✕</button>
 </div>
@@ -32,13 +140,40 @@
     align-items: center;
     gap: 10px;
     animation: slideIn 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
-    transition: border-color 0.2s, background 0.2s;
+    transition: all 0.2s;
   }
+  .item.checked {
+    opacity: 0.5;
+  }
+  .item.checked .name {
+    text-decoration: line-through;
+    color: var(--text3);
+  }
+
   @keyframes slideIn {
     from { opacity: 0; transform: translateY(-10px) scale(0.97); }
     to   { opacity: 1; transform: translateY(0) scale(1); }
   }
   .item:hover { border-color: var(--border2); background: var(--surface2); }
+
+  /* Checkbox Custom */
+  .check-btn {
+    background: none; border: none; padding: 0;
+    cursor: pointer; flex-shrink: 0;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .check-inner {
+    width: 24px; height: 24px;
+    border: 2px solid var(--border2);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-weight: 800; font-size: 14px;
+    transition: all 0.2s;
+  }
+  .is-checked .check-inner {
+    background: var(--green);
+    border-color: var(--green);
+  }
 
   .ico {
     font-size: 20px;
@@ -56,8 +191,10 @@
   .name {
     font-size: 14px; font-weight: 600;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    transition: all 0.2s;
   }
-  .unit { font-size: 11px; color: var(--text3); margin-top: 2px; font-variant-numeric: tabular-nums; }
+  .unit { font-size: 11px; color: var(--text3); margin-top: 2px; font-variant-numeric: tabular-nums; cursor: pointer; }
+  .price-link:hover { color: var(--accent); text-decoration: underline; }
 
   .qty-wrap {
     display: flex;
@@ -80,12 +217,32 @@
     user-select: none;
   }
   .qty:active { background: var(--surface2); }
-  .qty.minus:active { color: var(--red); background: rgba(248,113,113,0.12); }
-  .qty.plus:active  { color: var(--green); background: rgba(52,211,153,0.12); }
+  .qty-val {
+    min-width: 30px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+  }
+
   .qty-num {
     font-size: 13px; font-weight: 600;
-    min-width: 24px; text-align: center;
+    text-align: center;
     font-variant-numeric: tabular-nums;
+  }
+
+  .inline-input {
+    width: 60px;
+    background: white;
+    border: 1px solid var(--accent);
+    border-radius: 4px;
+    font-size: 11px;
+    padding: 2px 4px;
+    font-family: inherit;
+    outline: none;
+  }
+  .qty-input {
+    width: 40px;
+    text-align: center;
+    font-size: 13px;
   }
 
   .sub {

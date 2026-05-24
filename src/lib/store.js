@@ -38,9 +38,92 @@ function createAppStore() {
         const list = state.lists.find(l => l.id === state.activeId)
         if (list) {
           const uid = list.items.reduce((max, i) => Math.max(max, i.id), 0) + 1
-          list.items = [{ id: uid, nome, preco, qty: 1, cat }, ...list.items]
+          list.items = [{ id: uid, nome, preco, qty: 1, cat, checked: false }, ...list.items]
         }
         return { ...state }
+      })
+    },
+
+    toggleItemChecked(itemId) {
+      update(state => {
+        const list = state.lists.find(l => l.id === state.activeId)
+        if (list) {
+          list.items = list.items.map(i => 
+            i.id === itemId ? { ...i, checked: !i.checked } : i
+          )
+        }
+        return { ...state }
+      })
+    },
+
+    editItemPrice(itemId, newPrice) {
+      update(state => {
+        const list = state.lists.find(l => l.id === state.activeId)
+        if (list) {
+          list.items = list.items.map(i => 
+            i.id === itemId ? { ...i, preco: newPrice } : i
+          )
+        }
+        return { ...state }
+      })
+    },
+
+    editItemQty(itemId, newQty) {
+      update(state => {
+        const list = state.lists.find(l => l.id === state.activeId)
+        if (list) {
+          if (newQty < 1) {
+            list.items = list.items.filter(i => i.id !== itemId)
+          } else {
+            list.items = list.items.map(i => 
+              i.id === itemId ? { ...i, qty: newQty } : i
+            )
+          }
+        }
+        return { ...state }
+      })
+    },
+
+    archiveList(id) {
+      update(state => {
+        const list = state.lists.find(l => l.id === id)
+        if (list) {
+          list.archived = true
+        }
+        // Se arquivou a lista ativa, muda para outra ou cria uma nova
+        if (state.activeId === id) {
+          const remaining = state.lists.filter(l => !l.archived)
+          if (remaining.length > 0) {
+            state.activeId = remaining[0].id
+          } else {
+            const newId = state.lists.reduce((max, l) => Math.max(max, l.id), 0) + 1
+            const newList = { id: newId, name: 'Minha Lista', items: [], isTemplate: false }
+            state.lists.push(newList)
+            state.activeId = newId
+          }
+        }
+        return { ...state }
+      })
+    },
+
+    duplicateTemplateAsActive(templateId) {
+      update(state => {
+        const template = state.lists.find(l => l.id === templateId)
+        if (template) {
+          const newId = state.lists.reduce((max, l) => Math.max(max, l.id), 0) + 1
+          const newList = {
+            id: newId,
+            name: `${template.name} (Cópia)`,
+            isTemplate: false,
+            items: template.items.map(i => ({ ...i, checked: false }))
+          }
+          return {
+            ...state,
+            lists: [newList, ...state.lists],
+            activeId: newId
+          }
+        }
+        return state
       })
     },
 
@@ -75,10 +158,10 @@ function createAppStore() {
     },
 
     // List Management
-    createList(name) {
+    createList(name, isTemplate = false) {
       update(state => {
         const newId = state.lists.reduce((max, l) => Math.max(max, l.id), 0) + 1
-        const newList = { id: newId, name: name || `Lista ${newId}`, items: [] }
+        const newList = { id: newId, name: name || `Lista ${newId}`, items: [], isTemplate }
         return {
           ...state,
           lists: [newList, ...state.lists],
@@ -124,10 +207,17 @@ export const items = derived(appStore, $state => {
   return activeList ? activeList.items : []
 })
 
+export const activeList = derived(appStore, $state => {
+  return $state.lists.find(l => l.id === $state.activeId)
+})
+
 // Derived para expor as funções de items (manter a interface items.add, etc)
 export const itemsActions = {
   add: (nome, preco, cat) => appStore.addListItem(nome, preco, cat),
   changeQty: (id, delta) => appStore.changeQty(id, delta),
   remove: (id) => appStore.removeListItem(id),
-  clear: () => appStore.clearCurrentList()
+  clear: () => appStore.clearCurrentList(),
+  toggleChecked: (id) => appStore.toggleItemChecked(id),
+  editPrice: (id, price) => appStore.editItemPrice(id, price),
+  editQty: (id, qty) => appStore.editItemQty(id, qty)
 }

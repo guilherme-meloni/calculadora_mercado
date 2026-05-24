@@ -1,5 +1,5 @@
 <script>
-  import { itemsActions } from '../lib/store.js'
+  import { itemsActions, activeList } from '../lib/store.js'
   import { parsePrice } from '../lib/utils.js'
 
   const CATS = ['🛒','🥩','🥬','🥛','🧴','🍞','🧃','🧹','🐾']
@@ -8,6 +8,8 @@
   let preco = ''
   let focused = false
   let shake = false
+
+  $: isTemplate = $activeList?.isTemplate || false
 
   function add() {
     const p = parsePrice(preco)
@@ -56,7 +58,7 @@
       />
     </div>
     <div class="fw fw-price">
-      <label for="inp-preco">Preço</label>
+      <label for="inp-preco">{isTemplate ? 'Preço Est.' : 'Preço'}</label>
       <input
         id="inp-preco"
         type="text"
@@ -71,8 +73,8 @@
     </div>
   </div>
 
-  <button class="btn-add" on:click={add}>
-    + Adicionar ao carrinho
+  <button class="btn-add" class:is-template={isTemplate} on:click={add}>
+    {isTemplate ? '+ Adicionar ao template' : '+ Adicionar ao carrinho'}
   </button>
 </div>
 
@@ -186,6 +188,11 @@
     box-shadow: 0 4px 18px rgba(194, 84, 110, 0.35);
     -webkit-tap-highlight-color: transparent;
   }
+  .btn-add.is-template {
+    background: var(--yellow);
+    box-shadow: 0 4px 18px rgba(212, 168, 67, 0.35);
+  }
   .btn-add:hover  { background: #B0485F; }
+  .btn-add.is-template:hover { background: #b8913a; }
   .btn-add:active { transform: scale(0.97); box-shadow: 0 2px 8px rgba(194, 84, 110, 0.25); }
 </style>

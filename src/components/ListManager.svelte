@@ -15,11 +15,7 @@
     appStore.switchList(id)
   }
 
-  function handleDelete(id, name) {
-    if (confirm(`Excluir a lista "${name}"?`)) {
-      appStore.deleteList(id)
-    }
-  }
+  $: lists = $appStore.lists.filter(l => !l.isTemplate && !l.archived)
 </script>
 
 <div class="manager">
@@ -43,7 +39,7 @@
   {/if}
 
   <div class="lists-grid">
-    {#each $appStore.lists as list (list.id)}
+    {#each lists as list (list.id)}
       <button
         type="button"
         class="list-card"
@@ -54,7 +50,7 @@
           <div class="list-name">{list.name}</div>
           <div class="list-meta">{list.items.length} itens</div>
         </div>
-        {#if $appStore.lists.length > 1}
+        {#if lists.length > 1}
           <button type="button" class="btn-del" on:click|stopPropagation={() => handleDelete(list.id, list.name)}>✕</button>
         {/if}
       </button>

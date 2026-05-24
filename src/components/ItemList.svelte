@@ -1,6 +1,8 @@
 <script>
-  import { items } from '../lib/store.js'
+  import { items, activeList } from '../lib/store.js'
   import ItemRow from './ItemRow.svelte'
+
+  $: isTemplate = $activeList?.isTemplate || false
 </script>
 
 {#if $items.length === 0}
@@ -12,10 +14,10 @@
     </div>
   </div>
 {:else}
-  <div class="sec">Lista de compras</div>
+  <div class="sec">{$activeList?.name || 'Lista de compras'}</div>
   <div class="list">
     {#each $items as item (item.id)}
-      <ItemRow {item} />
+      <ItemRow {item} {isTemplate} />
     {/each}
   </div>
 {/if}
