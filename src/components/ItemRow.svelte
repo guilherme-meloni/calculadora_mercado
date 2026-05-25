@@ -1,5 +1,5 @@
 <script>
-  import { itemsActions } from '../lib/store.js'
+  import { itemsActions, appStore } from '../lib/store.js'
   import { formatBRL, parsePrice } from '../lib/utils.js'
 
   export let item
@@ -15,8 +15,11 @@
   let tempQty = ''
   let qtyInput
 
+  let editingName = false
+  let tempName = ''
+  let nameInput
+
   function startEditPrice() {
-    if (isTemplate) return
     tempPrice = item.preco.toString().replace('.', ',')
     editingPrice = true
     setTimeout(() => priceInput?.focus(), 50)
@@ -31,7 +34,6 @@
   }
 
   function startEditQty() {
-    if (isTemplate) return
     tempQty = item.qty.toString()
     editingQty = true
     setTimeout(() => qtyInput?.focus(), 50)
@@ -45,6 +47,26 @@
     editingQty = false
   }
 
+  function startEditName() {
+    tempName = item.nome
+    editingName = true
+    setTimeout(() => nameInput?.focus(), 50)
+  }
+
+  function saveName() {
+    if (tempName.trim()) {
+      // Usamos update direto na store para renomear o item já que não temos essa action específica
+      appStore.update(state => {
+        const list = state.lists.find(l => l.id === state.activeId)
+        if (list) {
+          list.items = list.items.map(i => i.id === item.id ? { ...i, nome: tempName.trim() } : i)
+        }
+        return { ...state }
+      })
+    }
+    editingName = false
+  }
+
   function onKeyPrice(e) {
     if (e.key === 'Enter') savePrice()
     if (e.key === 'Escape') editingPrice = false
@@ -53,6 +75,11 @@
   function onKeyQty(e) {
     if (e.key === 'Enter') saveQty()
     if (e.key === 'Escape') editingQty = false
+  }
+
+  function onKeyName(e) {
+    if (e.key === 'Enter') saveName()
+    if (e.key === 'Escape') editingName = false
   }
 
   let longPressTimer
@@ -81,7 +108,20 @@
   <div class="ico">{item.cat}</div>
   
   <div class="body">
-    <div class="name">{item.nome}</div>
+    <div class="name" on:click={startEditName}>
+      {#if editingName}
+        <input
+          bind:this={nameInput}
+          type="text"
+          bind:value={tempName}
+          on:blur={saveName}
+          on:keydown={onKeyName}
+          class="inline-input name-input"
+        />
+      {:else}
+        {item.nome}
+      {/if}
+    </div>
     <div class="unit" on:click={startEditPrice}>
       {#if editingPrice}
         <input

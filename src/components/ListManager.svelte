@@ -4,6 +4,10 @@
   let newListName = ''
   let showCreate = false
 
+  let editingId = null
+  let tempRename = ''
+  let renameInput
+
   function handleCreate() {
     if (!newListName.trim()) return
     appStore.createList(newListName.trim())
@@ -13,6 +17,25 @@
 
   function handleSwitch(id) {
     appStore.switchList(id)
+  }
+
+  function handleDelete(id, name) {
+    if (confirm(`Excluir a lista "${name}"?`)) {
+      appStore.deleteList(id)
+    }
+  }
+
+  function startRename(list) {
+    editingId = list.id
+    tempRename = list.name
+    setTimeout(() => renameInput?.focus(), 50)
+  }
+
+  function saveRename() {
+    if (tempRename.trim() && editingId) {
+      appStore.renameList(editingId, tempRename.trim())
+    }
+    editingId = null
   }
 
   $: lists = $appStore.lists.filter(l => !l.isTemplate && !l.archived)
@@ -47,7 +70,20 @@
         on:click={() => handleSwitch(list.id)}
       >
         <div class="list-info">
-          <div class="list-name">{list.name}</div>
+          <div class="list-name" on:dblclick|stopPropagation={() => startRename(list)}>
+            {#if editingId === list.id}
+              <input
+                bind:this={renameInput}
+                type="text"
+                bind:value={tempRename}
+                on:blur={saveRename}
+                on:keydown={e => e.key === 'Enter' && saveRename()}
+                class="rename-input"
+              />
+            {:else}
+              {list.name}
+            {/if}
+          </div>
           <div class="list-meta">{list.items.length} itens</div>
         </div>
         {#if lists.length > 1}
@@ -154,6 +190,17 @@
     text-overflow: ellipsis;
     margin-bottom: 2px;
   }
+  .rename-input {
+    width: 100%;
+    background: white;
+    border: 1px solid var(--accent);
+    border-radius: 4px;
+    font-size: 13px;
+    padding: 2px 4px;
+    font-family: inherit;
+    font-weight: 700;
+    outline: none;
+  }
   .list-meta {
     font-size: 11px;
     color: var(--text3);
@@ -161,15 +208,19 @@
   .btn-del {
     position: absolute;
     top: 6px; right: 6px;
-    width: 20px; height: 20px;
-    background: rgba(251, 73, 52, 0.1);
-    border: none;
-    border-radius: 6px;
+    width: 26px; height: 26px;
+    background: rgba(217, 88, 88, 0.15);
+    border: 1px solid rgba(217, 88, 88, 0.2);
+    border-radius: 8px;
     color: var(--red);
-    font-size: 10px;
+    font-size: 12px;
+    font-weight: 800;
     cursor: pointer;
-    opacity: 0;
-    transition: opacity 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    z-index: 2;
   }
-  .list-card:hover .btn-del { opacity: 1; }
+  .btn-del:active { transform: scale(0.9); background: rgba(217, 88, 88, 0.25); }
 </style>

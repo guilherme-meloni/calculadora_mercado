@@ -7,7 +7,7 @@
 <div class="topbar">
   <div>
     <div class="eye">{activeList ? activeList.name : 'Minhas compras'}</div>
-    <div class="title">Calculadora 🛒</div>
+    <div class="title">MarketMallow 🍬</div>
   </div>
   <div class="badge">
     <span class="dot"></span>

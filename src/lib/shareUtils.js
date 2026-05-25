@@ -28,7 +28,7 @@ export function formatListForWhatsApp(list) {
   text += `━━━━━━━━━━━━━━━━━━\n`
   text += `📦 *Total de itens: ${totalUnits} unidades*\n`
   text += `💰 *Total: ${formatBRL(totalGeral)}*\n\n`
-  text += `_Gerado pelo Mercado-Calc_ 🛒`
+  text += `_Gerado pelo MarketMallow_ 🍬`
 
   return text
 }

@@ -4,6 +4,10 @@
   let newTemplateName = ''
   let showCreate = false
 
+  let editingId = null
+  let tempRename = ''
+  let renameInput
+
   $: templates = $appStore.lists.filter(l => l.isTemplate && !l.archived)
 
   function handleCreate() {
@@ -25,6 +29,19 @@
     if (confirm(`Excluir o template "${name}"?`)) {
       appStore.deleteList(id)
     }
+  }
+
+  function startRename(t) {
+    editingId = t.id
+    tempRename = t.name
+    setTimeout(() => renameInput?.focus(), 50)
+  }
+
+  function saveRename() {
+    if (tempRename.trim() && editingId) {
+      appStore.renameList(editingId, tempRename.trim())
+    }
+    editingId = null
   }
 </script>
 
@@ -52,7 +69,20 @@
     {#each templates as t (t.id)}
       <div class="template-item" class:active={t.id === $appStore.activeId}>
         <div class="info" on:click={() => handleSwitch(t.id)}>
-          <div class="name">{t.name}</div>
+          <div class="name" on:dblclick|stopPropagation={() => startRename(t)}>
+            {#if editingId === t.id}
+              <input
+                bind:this={renameInput}
+                type="text"
+                bind:value={tempRename}
+                on:blur={saveRename}
+                on:keydown={e => e.key === 'Enter' && saveRename()}
+                class="rename-input"
+              />
+            {:else}
+              {t.name}
+            {/if}
+          </div>
           <div class="meta">{t.items.length} itens pré-definidos</div>
         </div>
         <div class="actions">
@@ -143,6 +173,17 @@
 
   .info { flex: 1; cursor: pointer; }
   .name { font-size: 14px; font-weight: 700; }
+  .rename-input {
+    width: 100%;
+    background: white;
+    border: 1px solid var(--accent);
+    border-radius: 4px;
+    font-size: 13px;
+    padding: 2px 4px;
+    font-family: inherit;
+    font-weight: 700;
+    outline: none;
+  }
   .meta { font-size: 11px; color: var(--text3); }
 
   .actions { display: flex; gap: 6px; }
