@@ -1,5 +1,6 @@
 <script>
   import { onMount } from 'svelte'
+  import { appStore, items } from './lib/store.js'
   import TopBar from './components/TopBar.svelte'
   import ListManager from './components/ListManager.svelte'
   import TemplateManager from './components/TemplateManager.svelte'
@@ -9,12 +10,47 @@
 
   let isDesktop = false
 
+  $: remainingItems = $items.filter(i => !i.checked).length
+
+  // Atualiza o Badge do App (Bolinha no ícone)
+  $: {
+    if ('setAppBadge' in navigator) {
+      if (remainingItems > 0) {
+        navigator.setAppBadge(remainingItems).catch(() => {});
+      } else {
+        navigator.clearAppBadge().catch(() => {});
+      }
+    }
+  }
+
   function checkSize() {
     isDesktop = window.innerWidth >= 768
   }
 
+  function handleShortcuts() {
+    const params = new URLSearchParams(window.location.search);
+    const action = params.get('action');
+
+    if (action === 'new-list') {
+      const name = prompt('Nome da nova lista:');
+      if (name) appStore.createList(name);
+    } else if (action === 'new-template') {
+      const name = prompt('Nome do novo template:');
+      if (name) appStore.createList(name, true);
+    } else if (action === 'new-product') {
+      // Foca no input de produto (já acontece por padrão se for a única lista)
+      setTimeout(() => {
+        document.getElementById('inp-nome')?.focus();
+      }, 500);
+    }
+    
+    // Limpa a URL para não repetir a ação no reload
+    if (action) window.history.replaceState({}, '', '/');
+  }
+
   onMount(() => {
     checkSize()
+    handleShortcuts()
     window.addEventListener('resize', checkSize)
     return () => window.removeEventListener('resize', checkSize)
   })
