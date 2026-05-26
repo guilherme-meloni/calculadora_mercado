@@ -4,11 +4,14 @@
   import TopBar from './components/TopBar.svelte'
   import ListManager from './components/ListManager.svelte'
   import TemplateManager from './components/TemplateManager.svelte'
+  import HistoryManager from './components/HistoryManager.svelte'
   import InputCard from './components/InputCard.svelte'
   import ItemList from './components/ItemList.svelte'
   import TotalBar from './components/TotalBar.svelte'
+  import Modal from './components/Modal.svelte'
 
   let isDesktop = false
+  let modalConfig = null // { title, message, type, confirm, cancel, value }
 
   $: remainingItems = $items.filter(i => !i.checked).length
 
@@ -27,24 +30,44 @@
     isDesktop = window.innerWidth >= 768
   }
 
-  function handleShortcuts() {
+  function showModal(config) {
+    return new Promise((resolve) => {
+      modalConfig = {
+        ...config,
+        confirm: (val) => {
+          modalConfig = null;
+          resolve(val || true);
+        },
+        cancel: () => {
+          modalConfig = null;
+          resolve(false);
+        }
+      };
+    });
+  }
+
+  // Sobrescreve funções globais para usar o modal bonito
+  onMount(() => {
+    window.customConfirm = (msg) => showModal({ title: 'Confirmação', message: msg, type: 'confirm' });
+    window.customPrompt = (msg) => showModal({ title: 'Novo Item', message: msg, type: 'prompt' });
+  });
+
+  async function handleShortcuts() {
     const params = new URLSearchParams(window.location.search);
     const action = params.get('action');
 
     if (action === 'new-list') {
-      const name = prompt('Nome da nova lista:');
+      const name = await showModal({ title: 'Nova Lista', message: 'Como se chama sua lista?', type: 'prompt' });
       if (name) appStore.createList(name);
     } else if (action === 'new-template') {
-      const name = prompt('Nome do novo template:');
+      const name = await showModal({ title: 'Novo Template', message: 'Nome para o modelo:', type: 'prompt' });
       if (name) appStore.createList(name, true);
     } else if (action === 'new-product') {
-      // Foca no input de produto (já acontece por padrão se for a única lista)
       setTimeout(() => {
         document.getElementById('inp-nome')?.focus();
       }, 500);
     }
     
-    // Limpa a URL para não repetir a ação no reload
     if (action) window.history.replaceState({}, '', '/');
   }
 
@@ -66,6 +89,8 @@
       <ListManager />
       <div class="divider"></div>
       <TemplateManager />
+      <div class="divider"></div>
+      <HistoryManager />
     </aside>
 
     <main class="main-content">
@@ -75,6 +100,14 @@
   </div>
 
   <TotalBar />
+
+  {#if modalConfig}
+    <Modal 
+      {...modalConfig} 
+      on:confirm={(e) => modalConfig.confirm(e.detail)} 
+      on:cancel={modalConfig.cancel} 
+    />
+  {/if}
 </div>
 
 <style>

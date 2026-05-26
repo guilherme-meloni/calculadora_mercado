@@ -9,8 +9,8 @@
   $: checkedCount = $items.filter(i => i.checked).length
   $: isTemplate = $activeList?.isTemplate || false
 
-  function handleFinalize() {
-    if (confirm('Arquivar esta compra?')) {
+  async function handleFinalize() {
+    if (await window.customConfirm('Deseja arquivar esta compra e enviá-la para o histórico?')) {
       appStore.archiveList($activeList.id)
     }
   }
@@ -135,6 +135,14 @@
     cursor: pointer;
     transition: all 0.15s;
     -webkit-tap-highlight-color: transparent;
+  }
+  .btn-clear:active {
+    border-color: var(--red);
+    color: var(--red);
+    background: rgba(248,113,113,0.07);
+  }
+</style>
+sparent;
   }
   .btn-clear:active {
     border-color: var(--red);

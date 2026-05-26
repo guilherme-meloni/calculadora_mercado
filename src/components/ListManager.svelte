@@ -19,8 +19,8 @@
     appStore.switchList(id)
   }
 
-  function handleDelete(id, name) {
-    if (confirm(`Excluir a lista "${name}"?`)) {
+  async function handleDelete(id, name) {
+    if (await window.customConfirm(`Excluir a lista "${name}"?`)) {
       appStore.deleteList(id)
     }
   }

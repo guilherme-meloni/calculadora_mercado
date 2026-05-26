@@ -25,8 +25,8 @@
     appStore.duplicateTemplateAsActive(id)
   }
 
-  function handleDelete(id, name) {
-    if (confirm(`Excluir o template "${name}"?`)) {
+  async function handleDelete(id, name) {
+    if (await window.customConfirm(`Excluir o template "${name}"?`)) {
       appStore.deleteList(id)
     }
   }
