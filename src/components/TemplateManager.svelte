@@ -68,8 +68,8 @@
   <div class="templates-list">
     {#each templates as t (t.id)}
       <div class="template-item" class:active={t.id === $appStore.activeId}>
-        <div class="info" on:click={() => handleSwitch(t.id)}>
-          <div class="name" on:dblclick|stopPropagation={() => startRename(t)}>
+        <button class="info" on:click={() => handleSwitch(t.id)}>
+          <div class="name" role="button" tabindex="0" on:dblclick|stopPropagation={() => startRename(t)}>
             {#if editingId === t.id}
               <input
                 bind:this={renameInput}
@@ -84,7 +84,7 @@
             {/if}
           </div>
           <div class="meta">{t.items.length} itens pré-definidos</div>
-        </div>
+        </button>
         <div class="actions">
           <button class="btn-use" on:click={() => handleUse(t.id)}>Usar</button>
           <button class="btn-del" on:click={() => handleDelete(t.id, t.name)}>✕</button>
@@ -171,7 +171,16 @@
     background: var(--surface2);
   }
 
-  .info { flex: 1; cursor: pointer; }
+  .info { 
+    flex: 1; 
+    cursor: pointer; 
+    background: none; 
+    border: none; 
+    text-align: left; 
+    padding: 0; 
+    font-family: inherit;
+    color: inherit;
+  }
   .name { font-size: 14px; font-weight: 700; }
   .rename-input {
     width: 100%;

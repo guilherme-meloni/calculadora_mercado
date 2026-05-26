@@ -69,8 +69,8 @@
         class:active={list.id === $appStore.activeId}
         on:click={() => handleSwitch(list.id)}
       >
-        <div class="list-info">
-          <div class="list-name" on:dblclick|stopPropagation={() => startRename(list)}>
+        <div class="list-info" role="button" tabindex="0" on:keypress={e => e.key === 'Enter' && startRename(list)}>
+          <div class="list-name" role="button" tabindex="0" on:dblclick|stopPropagation={() => startRename(list)}>
             {#if editingId === list.id}
               <input
                 bind:this={renameInput}

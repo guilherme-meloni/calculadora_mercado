@@ -32,7 +32,7 @@
 
   {#each archivedLists as list (list.id)}
     <div class="archived-card" class:expanded={expandedId === list.id}>
-      <div class="card-header" on:click={() => toggle(list.id)}>
+      <button class="card-header" on:click={() => toggle(list.id)} aria-expanded={expandedId === list.id}>
         <div class="info">
           <div class="name">{list.name}</div>
           <div class="meta">
@@ -40,7 +40,7 @@
           </div>
         </div>
         <div class="arrow">{expandedId === list.id ? '▴' : '▾'}</div>
-      </div>
+      </button>
 
       {#if expandedId === list.id}
         <div class="details" transition:slide>
@@ -50,7 +50,7 @@
                 <span>{item.cat} {item.nome} ({item.qty}x)</span>
                 <span>{formatBRL(item.preco * item.qty)}</span>
               </div>
-            {}
+            {/each}
           </div>
           <div class="actions">
             <button class="btn-restore" on:click={() => restore(list.id)}>Reabrir</button>
@@ -88,11 +88,17 @@
     overflow: hidden;
   }
   .card-header {
+    width: 100%;
+    background: none;
+    border: none;
     padding: 14px 18px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     cursor: pointer;
+    font-family: inherit;
+    text-align: left;
+    color: inherit;
   }
   .name { font-size: 14px; font-weight: 700; color: var(--text); }
   .meta { font-size: 11px; color: var(--text3); margin-top: 2px; }

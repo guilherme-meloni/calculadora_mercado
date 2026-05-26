@@ -134,7 +134,9 @@
           class="inline-input"
         />
       {:else}
-        <span class="price-link">{formatBRL(item.preco)} / un</span>
+        <span class="price-link" class:missing={item.preco <= 0}>
+          {item.preco > 0 ? formatBRL(item.preco) : 'Definir preço'} / un
+        </span>
       {/if}
     </div>
   </div>
@@ -234,6 +236,7 @@
     transition: all 0.2s;
   }
   .unit { font-size: 11px; color: var(--text3); margin-top: 2px; font-variant-numeric: tabular-nums; cursor: pointer; }
+  .price-link.missing { color: var(--red); font-weight: 800; text-decoration: underline; }
   .price-link:hover { color: var(--accent); text-decoration: underline; }
 
   .qty-wrap {

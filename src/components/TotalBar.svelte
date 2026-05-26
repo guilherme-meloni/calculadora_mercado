@@ -54,25 +54,31 @@
     justify-content: center;
     z-index: 100;
     pointer-events: none;
+    /* Fix para flicker no iOS Safari */
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
   }
   .fade {
     height: 36px;
     background: linear-gradient(to top, var(--bg) 20%, transparent);
+    width: 100%;
   }
   .inner {
     margin: 0 16px;
     margin-bottom: max(env(safe-area-inset-bottom), 16px);
     background: var(--surface);
-    border: 1px solid var(--border2);
+    border: 1.5px solid var(--border2);
     border-radius: 22px;
     padding: 12px 18px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.05);
+    box-shadow: 0 8px 32px rgba(194, 84, 110, 0.15);
     pointer-events: all;
     max-width: 480px;
     width: calc(100vw - 32px);
+    /* Garante altura fixa para evitar flicker no resize de conteúdo */
+    min-height: 82px;
   }
   
   /* Desktop adjustment for width */
@@ -135,14 +141,6 @@
     cursor: pointer;
     transition: all 0.15s;
     -webkit-tap-highlight-color: transparent;
-  }
-  .btn-clear:active {
-    border-color: var(--red);
-    color: var(--red);
-    background: rgba(248,113,113,0.07);
-  }
-</style>
-sparent;
   }
   .btn-clear:active {
     border-color: var(--red);
