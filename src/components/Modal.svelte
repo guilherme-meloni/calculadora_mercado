@@ -29,11 +29,18 @@
   }
 </script>
 
-<div class="modal-overlay" on:click|self={close} transition:fade={{ duration: 200 }}>
-  <div class="modal-card" transition:scale={{ duration: 300, start: 0.9, opacity: 0 }}>
+<div 
+  class="modal-overlay" 
+  on:click|self={close} 
+  on:keydown={e => e.key === 'Escape' && close()} 
+  transition:fade={{ duration: 200 }} 
+  role="button" 
+  tabindex="-1"
+>
+  <div class="modal-card" transition:scale={{ duration: 300, start: 0.9, opacity: 0 }} role="dialog">
     <div class="header">
       <div class="title">{title}</div>
-      <button class="close-top" on:click={close}>✕</button>
+      <button class="close-top" on:click={close} aria-label="Fechar">✕</button>
     </div>
     
     <div class="body">
@@ -47,7 +54,7 @@
           bind:value 
           on:keydown={onKey} 
           placeholder="Digite aqui..."
-          autofocus
+          use:autofocus
         />
       {/if}
     </div>
@@ -157,8 +164,5 @@
     color: white;
     box-shadow: 0 4px 12px rgba(194, 84, 110, 0.3);
   }
-  .btn-confirm:active { transform: scale(0.96); }
-</style>
- }
   .btn-confirm:active { transform: scale(0.96); }
 </style>
