@@ -212,6 +212,11 @@ function createAppStore() {
 
 export const appStore = createAppStore()
 
+// Navegação e UI
+export const activeView = writable('shopping') // 'shopping' | 'lists' | 'templates' | 'history'
+export const bottomSheetOpen = writable(false)
+export const bottomSheetContent = writable(null) // 'lists' | 'templates' | 'history'
+
 // Derived store para os itens da lista ativa (compatibilidade com componentes existentes)
 export const items = derived(appStore, $state => {
   const activeList = $state.lists.find(l => l.id === $state.activeId)

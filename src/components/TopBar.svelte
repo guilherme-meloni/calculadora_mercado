@@ -1,70 +1,80 @@
 <script>
-  import { appStore, items } from '../lib/store.js'
-  $: count = $items.length
-  $: activeList = $appStore.lists.find(l => l.id === $appStore.activeId)
+  import { activeList, bottomSheetOpen, bottomSheetContent } from '../lib/store.js';
+
+  function open(panel) {
+    bottomSheetContent.set(panel);
+    bottomSheetOpen.set(true);
+  }
 </script>
 
-<div class="topbar">
-  <div>
-    <div class="eye">{activeList ? activeList.name : 'Minhas compras'}</div>
-    <div class="title">MarketMallow 🍬</div>
+<header class="topbar">
+  <div class="topbar-left">
+    <span class="topbar-logo" aria-hidden="true">🍬</span>
+    <span class="topbar-listname">{$activeList?.name || 'MarketMallow'}</span>
   </div>
-  <div class="badge">
-    <span class="dot"></span>
-    <span>{count} {count === 1 ? 'item' : 'itens'}</span>
-  </div>
-</div>
+
+  <nav class="topbar-nav" aria-label="Abrir painéis">
+    <button class="topbar-btn" on:click={() => open('lists')}     aria-label="Minhas listas">   📋 </button>
+    <button class="topbar-btn" on:click={() => open('templates')} aria-label="Templates">        ⭐ </button>
+    <button class="topbar-btn" on:click={() => open('history')}   aria-label="Histórico">        🕐 </button>
+  </nav>
+</header>
 
 <style>
-  .topbar {
-    padding: max(env(safe-area-inset-top), 28px) 20px 0;
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    margin-bottom: 22px;
-  }
+.topbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: calc(60px + env(safe-area-inset-top, 0px));
+  padding-top: env(safe-area-inset-top, 0px);
+  background: var(--surface);
+  border-bottom: 2.5px solid var(--border);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-left: 14px;
+  padding-right: 14px;
+  border-radius: 0 0 24px 24px;
+  box-shadow: 0 4px 16px rgba(60, 32, 48, 0.05);
+}
 
-  .eye {
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--accent2);   /* verde feira */
-    margin-bottom: 3px;
-  }
+.topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.topbar-logo { font-size: 1.4rem; }
+.topbar-listname {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--text);
+  max-width: 160px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
-  .title {
-    font-size: 24px;
-    font-weight: 800;
-    letter-spacing: -0.02em;
-    color: var(--text);
-  }
+.topbar-nav {
+  display: flex;
+  gap: 6px;
+}
+.topbar-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: 1.5px solid var(--border);
+  background: var(--surface2);
+  color: var(--text);
+  transition: all 0.15s;
+}
+.topbar-btn:active { transform: scale(0.86); background: var(--border); }
 
-  .badge {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    background: #FFF0F5;
-    border: 1.5px solid var(--border);
-    border-radius: 20px;
-    padding: 6px 13px;
-    font-size: 12px;
-    font-weight: 700;
-    color: var(--text2);
-    font-variant-numeric: tabular-nums;
-  }
-
-  .dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--accent);
-    /* pulsa suavemente pra dar vida */
-    animation: pulse 2.4s ease-in-out infinite;
-  }
-
-  @keyframes pulse {
-    0%, 100% { opacity: 1;   transform: scale(1);    }
-    50%       { opacity: 0.5; transform: scale(0.75); }
-  }
+@media (min-width: 768px) {
+  .topbar-nav { display: none; }
+}
 </style>

@@ -55,7 +55,6 @@
 
   function saveName() {
     if (tempName.trim()) {
-      // Usamos update direto na store para renomear o item já que não temos essa action específica
       appStore.update(state => {
         const list = state.lists.find(l => l.id === state.activeId)
         if (list) {
@@ -92,7 +91,7 @@
   function toggleChecked() {
     if (!item.checked && item.preco <= 0) {
       startEditPrice();
-      return; // Não marca como pego até ter um preço
+      return;
     }
     itemsActions.toggleChecked(item.id)
   }
@@ -142,7 +141,7 @@
         />
       {:else}
         <button class="price-link" class:missing={item.preco <= 0} on:click={startEditPrice}>
-          {item.preco > 0 ? formatBRL(item.preco) : 'Definir preço'} / un
+          <span class="price">{item.preco > 0 ? formatBRL(item.preco) : 'Definir preço'}</span> / un
         </button>
       {/if}
     </div>
@@ -176,85 +175,86 @@
     <button class="qty plus" on:click={() => itemsActions.changeQty(item.id, +1)}>+</button>
   </div>
 
-  <span class="sub">{formatBRL(subtotal)}</span>
-  <button class="del" on:click={() => itemsActions.remove(item.id)}>✕</button>
+  <div class="sub-box">
+    <span class="sub price">{formatBRL(subtotal)}</span>
+  </div>
+  <button class="del" on:click={() => itemsActions.remove(item.id)} aria-label="Remover item">✕</button>
 </div>
 
 <style>
   .item {
     background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 17px;
-    padding: 12px 13px;
-    display: flex;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 10px;
+    display: grid;
+    grid-template-columns: auto auto 1fr auto auto auto;
     align-items: center;
-    gap: 10px;
-    animation: slideIn 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+    gap: 8px;
     transition: all 0.2s;
+    animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 4px 12px rgba(60, 32, 48, 0.04);
   }
-  .item.checked {
-    opacity: 0.5;
-  }
-  .item.checked .name {
-    text-decoration: line-through;
-    color: var(--text3);
+  .item:hover { border-color: var(--border2); }
+
+  @media (max-width: 400px) {
+    .item { gap: 6px; padding: 8px; }
   }
 
-  @keyframes slideIn {
-    from { opacity: 0; transform: translateY(-10px) scale(0.97); }
-    to   { opacity: 1; transform: translateY(0) scale(1); }
-  }
-  .item:hover { border-color: var(--border2); background: var(--surface2); }
+  .item.checked { opacity: 0.6; }
+  .item.checked .name-txt { text-decoration: line-through; color: var(--text3); }
 
-  /* Checkbox Custom */
   .check-btn {
     background: none; border: none; padding: 0;
     cursor: pointer; flex-shrink: 0;
     -webkit-tap-highlight-color: transparent;
   }
   .check-inner {
-    width: 24px; height: 24px;
-    border: 2px solid var(--border2);
-    border-radius: 8px;
+    width: 26px; height: 26px;
+    border-radius: 9px;
     display: flex; align-items: center; justify-content: center;
-    color: white; font-weight: 800; font-size: 14px;
+    color: white; font-weight: 900; font-size: 14px;
+    background: var(--surface2);
+    border: 1.5px solid var(--border);
     transition: all 0.2s;
   }
   .is-checked .check-inner {
     background: var(--green);
-    border-color: var(--green);
+    border-color: transparent;
   }
 
   .ico {
     font-size: 20px;
     width: 38px; height: 38px;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 11px;
+    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+    background: var(--surface2);
+    border: 1px solid var(--border);
   }
 
-  .body { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: flex-start; }
+  .body { min-width: 0; display: flex; flex-direction: column; align-items: flex-start; }
   .name-btn {
     background: none; border: none; padding: 0;
     width: 100%; text-align: left; cursor: pointer;
     font-family: inherit; color: inherit;
+    overflow: hidden;
   }
   .name-txt {
     display: block;
-    font-size: 14px; font-weight: 600;
+    font-size: 0.85rem; font-weight: 700;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    transition: all 0.2s;
+    color: var(--text);
   }
   .unit-box { width: 100%; display: flex; }
   .price-link { 
     background: none; border: none; padding: 0;
-    font-size: 11px; color: var(--text3); margin-top: 2px; 
-    font-variant-numeric: tabular-nums; cursor: pointer; 
-    font-family: inherit;
+    font-size: 0.7rem; color: var(--text3); margin-top: 1px; 
+    cursor: pointer; font-family: inherit;
+    font-weight: 600;
+    white-space: nowrap;
   }
   .price-link.missing { 
     color: var(--red); 
@@ -266,83 +266,70 @@
     0%, 100% { opacity: 1; }
     50% { opacity: 0.5; }
   }
-  .price-link:hover { color: var(--accent); text-decoration: underline; }
+  .price-link:hover { color: var(--accent); }
 
   .qty-wrap {
     display: flex;
     align-items: center;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 11px;
+    border-radius: 10px;
     overflow: hidden;
     flex-shrink: 0;
+    background: var(--surface2);
+    border: 1px solid var(--border);
   }
   .qty {
-    width: 34px; height: 34px;
+    width: 28px; height: 28px;
     background: none; border: none;
-    color: var(--text3);
-    font-size: 18px;
+    color: var(--text);
+    font-size: 1rem;
     cursor: pointer;
     display: flex; align-items: center; justify-content: center;
-    transition: color 0.15s, background 0.15s;
+    transition: all 0.15s;
     -webkit-tap-highlight-color: transparent;
-    user-select: none;
   }
-  .qty:active { background: var(--surface2); }
+  .qty:active { background: var(--border); }
   .qty-val {
-    min-width: 30px;
+    min-width: 24px;
+    height: 28px;
     display: flex; align-items: center; justify-content: center;
     cursor: pointer;
     background: none; border: none; padding: 0;
     font-family: inherit; color: inherit;
   }
-
-  .qty-num {
-    font-size: 13px; font-weight: 600;
-    text-align: center;
-    font-variant-numeric: tabular-nums;
-  }
+  .qty-num { font-size: 0.8rem; font-weight: 800; }
 
   .inline-input {
     width: 60px;
     background: white;
-    border: 1px solid var(--accent);
-    border-radius: 4px;
-    font-size: 11px;
+    border: 1.5px solid var(--accent);
+    border-radius: 6px;
+    font-size: 0.75rem;
     padding: 2px 4px;
     font-family: inherit;
     outline: none;
   }
-  .qty-input {
-    width: 40px;
-    text-align: center;
-    font-size: 13px;
-  }
+  .name-input { width: 100%; }
+  .qty-input { width: 34px; text-align: center; }
 
-  .sub {
-    font-size: 13px; font-weight: 600;
-    color: var(--green);
-    min-width: 72px; text-align: right;
+  .sub-box {
+    min-width: 64px; text-align: right;
     flex-shrink: 0;
-    font-variant-numeric: tabular-nums;
+  }
+  .sub {
+    font-size: 0.8rem;
+    color: var(--accent);
   }
 
   .del {
-    width: 30px; height: 30px;
+    width: 26px; height: 26px;
     background: none;
-    border: 1px solid transparent;
-    border-radius: 9px;
+    border: none;
     color: var(--text3);
-    font-size: 14px;
+    font-size: 1rem;
     cursor: pointer;
     display: flex; align-items: center; justify-content: center;
-    transition: all 0.15s;
-    flex-shrink: 0;
-    -webkit-tap-highlight-color: transparent;
+    opacity: 0.4;
+    transition: all 0.2s;
   }
-  .del:active {
-    color: var(--red);
-    border-color: rgba(248,113,113,0.35);
-    background: rgba(248,113,113,0.1);
-  }
+  .del:hover { opacity: 1; color: var(--red); }
 </style>

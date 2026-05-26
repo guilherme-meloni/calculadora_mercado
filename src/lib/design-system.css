@@ -1,0 +1,127 @@
+:root {
+  /* Paleta Original Gruvbox Pastel Rosa */
+  --bg:       #FFF8F5;   /* creme quente — fundo da página */
+  --surface:  #FFFFFF;   /* branco puro — cards */
+  --surface2: #FFF0F5;   /* rosa claríssimo — hover/inputs */
+  
+  --border:   #F2C4CE;   /* rosa pastel suave */
+  --border2:  #E8A0B0;   /* rosa médio — destaque */
+  
+  --accent:   #C2546E;   /* rosa âncora — botões, destaque */
+  --accent2:  #A8C5A0;   /* verde feira — label ativo */
+
+  --green:    #6B9E6B;   /* confirmações, subtotais */
+  --red:      #D95858;   /* erros, remover */
+  --yellow:   #D4A843;   /* avisos, estrelas */
+  --blue:     #7BAFC4;   /* infos, links */
+
+  --text:     #3C2030;   /* quase-preto quente — principal */
+  --text2:    #6B3040;   /* marrom-rosa — secundário */
+  --text3:    #B07088;   /* rosa médio — dicas, labels */
+
+  /* Cores de apoio para o novo sistema */
+  --color-pink-strong: var(--accent);
+  --color-text: var(--text);
+  --color-text-soft: var(--text3);
+  --color-pink-mid: var(--border2);
+  --color-pink-soft: var(--border);
+  --color-success: var(--green);
+  --color-warning: var(--yellow);
+
+  /* Geometria Chubby */
+  --radius-sm:   12px;
+  --radius-md:   18px;
+  --radius-lg:   24px;
+  --radius-xl:   32px;
+  --radius-pill: 999px;
+
+  --font-main: 'Nunito', sans-serif;
+
+  /* Z-index layers */
+  --z-content:     1;
+  --z-sheet:       100;
+  --z-totalbar:    200;
+  --z-overlay:     90;
+}
+
+/* Fundo da Página Original */
+body, html, #app, .app {
+  min-height: 100dvh;
+  background: var(--bg);
+  background-attachment: fixed;
+  margin: 0;
+  font-family: var(--font-main);
+  color: var(--text);
+  overflow-x: hidden;
+}
+
+/* Classe .glass redefinida para Estilo Sólido (Original) */
+.glass {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  box-shadow: 0 4px 12px rgba(60, 32, 48, 0.06);
+  position: relative;
+  overflow: hidden;
+}
+
+.glass-heavy {
+  background: var(--surface);
+  border: 2px solid var(--border2);
+  box-shadow: 0 8px 24px rgba(60, 32, 48, 0.1);
+}
+
+.glass:hover {
+  border-color: var(--border2);
+  background: var(--surface);
+}
+
+.glass:active {
+  background: var(--surface2);
+}
+
+/* Remover os pseudo-elementos de vidro */
+.glass::before, .glass::after { display: none !important; }
+
+/* Anti-zoom iOS em inputs */
+@media screen and (max-width: 767px) {
+  input, select, textarea {
+    font-size: 16px !important;
+  }
+}
+
+/* Reset de tap highlight global */
+* {
+  -webkit-tap-highlight-color: transparent;
+  box-sizing: border-box;
+}
+
+/* Scrollbar invisível mas funcional */
+::-webkit-scrollbar { display: none; }
+* { scrollbar-width: none; }
+
+::selection { background: var(--border); color: var(--text); }
+
+h1, h2, h3 { font-weight: 900; color: var(--text); margin: 0; }
+p, span, label { font-weight: 600; color: var(--text2); }
+.price { font-weight: 900; font-variant-numeric: tabular-nums; }
+
+/* Animações do Sistema */
+@keyframes slideUpSheet {
+  from { transform: translateY(100%); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+@keyframes fadeOverlay {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes popIn {
+  0%   { transform: scale(0.85); opacity: 0; }
+  70%  { transform: scale(1.03); }
+  100% { transform: scale(1);    opacity: 1; }
+}
+@keyframes accordionDown {
+  from { max-height: 0; opacity: 0; }
+  to   { max-height: 600px; opacity: 1; }
+}
+
+.pop-in { animation: popIn 0.3s cubic-bezier(0.34,1.56,0.64,1); }

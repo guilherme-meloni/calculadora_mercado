@@ -1,0 +1,44 @@
+{
+  "short_name": "MarketMallow",
+  "name": "MarketMallow - Calculadora de Mercado",
+  "icons": [
+    {
+      "src": "/favicon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/favicon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#FFF8F5",
+  "background_color": "#FFF8F5",
+  "shortcuts": [
+    {
+      "name": "Nova Lista",
+      "short_name": "Lista",
+      "description": "Criar uma nova lista de compras",
+      "url": "/?action=new-list",
+      "icons": [{ "src": "/favicon.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Novo Template",
+      "short_name": "Template",
+      "description": "Criar um novo template",
+      "url": "/?action=new-template",
+      "icons": [{ "src": "/favicon.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Novo Produto",
+      "short_name": "Produto",
+      "description": "Adicionar produto rápido",
+      "url": "/?action=new-product",
+      "icons": [{ "src": "/favicon.png", "sizes": "192x192" }]
+    }
+  ]
+}

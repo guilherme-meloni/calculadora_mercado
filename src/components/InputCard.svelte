@@ -28,8 +28,7 @@
   }
 </script>
 
-<div class="card" class:focused class:shake>
-  <!-- Categorias -->
+<div class="card pop-in" class:focused class:shake>
   <div class="cats">
     {#each CATS as c}
       <button
@@ -41,7 +40,6 @@
     {/each}
   </div>
 
-  <!-- Campos -->
   <div class="fields">
     <div class="fw">
       <label for="inp-nome">Produto</label>
@@ -80,33 +78,33 @@
 
 <style>
   .card {
-    margin: 0 16px 14px;
     background: var(--surface);
     border: 1.5px solid var(--border);
-    border-radius: 22px;
-    padding: 16px;
-    transition: border-color 0.25s, box-shadow 0.25s;
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 4px 12px rgba(60, 32, 48, 0.05);
   }
   .card.focused {
     border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgba(194, 84, 110, 0.12);
+    box-shadow: 0 8px 24px rgba(60, 32, 48, 0.1);
+    transform: scale(1.01);
   }
   .card.shake {
     animation: shakeAnim 0.4s ease;
   }
   @keyframes shakeAnim {
     0%,100% { transform: translateX(0); }
-    15%      { transform: translateX(-7px) rotate(-0.4deg); }
-    35%      { transform: translateX(7px) rotate(0.4deg); }
+    15%      { transform: translateX(-7px); }
+    35%      { transform: translateX(7px); }
     55%      { transform: translateX(-4px); }
     75%      { transform: translateX(4px); }
   }
 
-  /* ── Seletores de categoria ── */
   .cats {
     display: flex;
-    gap: 8px;
-    margin-bottom: 16px;
+    gap: 10px;
+    margin-bottom: 18px;
     overflow-x: auto;
     scrollbar-width: none;
     -webkit-overflow-scrolling: touch;
@@ -119,9 +117,9 @@
   .cat {
     background: var(--surface2);
     border: 1.5px solid var(--border);
-    border-radius: 14px;
+    border-radius: 16px;
     padding: 10px 14px;
-    font-size: 20px;
+    font-size: 22px;
     cursor: pointer;
     flex-shrink: 0;
     line-height: 1;
@@ -131,23 +129,22 @@
   }
   .cat.active {
     border-color: var(--accent);
-    background: rgba(194, 84, 110, 0.1);
-    box-shadow: 0 0 0 2px rgba(194, 84, 110, 0.2);
-    transform: scale(1.08);
+    background: var(--surface2);
+    box-shadow: 0 0 0 3px rgba(194, 84, 110, 0.15);
+    transform: scale(1.1);
   }
-  .cat:active { transform: scale(0.92); }
+  .cat:active { transform: scale(0.9); }
 
-  /* ── Campos de texto ── */
-  .fields { display: flex; gap: 10px; margin-bottom: 12px; }
+  .fields { display: flex; gap: 12px; margin-bottom: 16px; }
   .fw { flex: 1; position: relative; }
-  .fw.fw-price { flex: 0 0 126px; }
+  .fw.fw-price { flex: 0 0 110px; }
 
   .fw label {
     position: absolute;
     top: 10px; left: 14px;
     font-size: 10px;
-    font-weight: 800;
-    letter-spacing: 0.12em;
+    font-weight: 900;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
     color: var(--text3);
     pointer-events: none;
@@ -157,46 +154,44 @@
 
   .fw input {
     width: 100%;
-    background: #FFF8F5;
+    background: var(--surface2);
     border: 1.5px solid var(--border);
-    border-radius: 13px;
-    padding: 27px 14px 10px;
+    border-radius: 18px;
+    padding: 28px 14px 12px;
     color: var(--text);
     font-family: inherit;
-    font-size: 15px;
-    font-weight: 600;
+    font-size: 16px;
+    font-weight: 700;
     outline: none;
-    transition: border-color 0.2s, box-shadow 0.2s;
+    transition: all 0.2s;
     -webkit-appearance: none;
   }
-  .fw input::placeholder { color: var(--text3); font-weight: 400; }
+  .fw input::placeholder { color: var(--text3); opacity: 0.5; font-weight: 500; }
   .fw input:focus {
     border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgba(194, 84, 110, 0.1);
+    background: var(--surface);
   }
 
-  /* ── Botão adicionar ── */
   .btn-add {
     width: 100%;
     background: var(--accent);
     color: #fff;
     border: none;
-    border-radius: 14px;
-    padding: 15px;
+    border-radius: 18px;
+    padding: 16px;
     font-family: inherit;
-    font-weight: 800;
-    font-size: 15px;
+    font-weight: 900;
+    font-size: 16px;
     letter-spacing: 0.01em;
     cursor: pointer;
-    transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
-    box-shadow: 0 4px 18px rgba(194, 84, 110, 0.35);
+    transition: all 0.2s;
+    box-shadow: 0 6px 20px rgba(194, 84, 110, 0.3);
     -webkit-tap-highlight-color: transparent;
   }
   .btn-add.is-template {
     background: var(--yellow);
-    box-shadow: 0 4px 18px rgba(212, 168, 67, 0.35);
+    box-shadow: 0 6px 20px rgba(212, 168, 67, 0.3);
   }
-  .btn-add:hover  { background: #B0485F; }
-  .btn-add.is-template:hover { background: #b8913a; }
-  .btn-add:active { transform: scale(0.97); box-shadow: 0 2px 8px rgba(194, 84, 110, 0.25); }
+  .btn-add:hover  { transform: translateY(-2px); }
+  .btn-add:active { transform: scale(0.96); box-shadow: 0 4px 12px rgba(194, 84, 110, 0.2); }
 </style>
