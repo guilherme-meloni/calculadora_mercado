@@ -89,6 +89,13 @@
   function cancelLongPress() {
     clearTimeout(longPressTimer)
   }
+  function toggleChecked() {
+    if (!item.checked && item.preco <= 0) {
+      startEditPrice();
+      return; // Não marca como pego até ter um preço
+    }
+    itemsActions.toggleChecked(item.id)
+  }
 </script>
 
 <div class="item" class:checked={item.checked && !isTemplate} class:is-template={isTemplate}>
@@ -96,7 +103,7 @@
     <button 
       class="check-btn" 
       class:is-checked={item.checked}
-      on:click={() => itemsActions.toggleChecked(item.id)}
+      on:click={toggleChecked}
       aria-label="Marcar como pego"
     >
       <div class="check-inner">
@@ -108,7 +115,7 @@
   <div class="ico">{item.cat}</div>
   
   <div class="body">
-    <div class="name" on:click={startEditName}>
+    <button class="name-btn" on:click={startEditName}>
       {#if editingName}
         <input
           bind:this={nameInput}
@@ -119,10 +126,10 @@
           class="inline-input name-input"
         />
       {:else}
-        {item.nome}
+        <span class="name-txt">{item.nome}</span>
       {/if}
-    </div>
-    <div class="unit" on:click={startEditPrice}>
+    </button>
+    <div class="unit-box">
       {#if editingPrice}
         <input
           bind:this={priceInput}
@@ -134,22 +141,23 @@
           class="inline-input"
         />
       {:else}
-        <span class="price-link" class:missing={item.preco <= 0}>
+        <button class="price-link" class:missing={item.preco <= 0} on:click={startEditPrice}>
           {item.preco > 0 ? formatBRL(item.preco) : 'Definir preço'} / un
-        </span>
+        </button>
       {/if}
     </div>
   </div>
 
   <div class="qty-wrap">
     <button class="qty minus" on:click={() => itemsActions.changeQty(item.id, -1)}>−</button>
-    <div 
+    <button 
       class="qty-val" 
       on:mousedown={startLongPress} 
       on:mouseup={cancelLongPress}
       on:touchstart={startLongPress}
       on:touchend={cancelLongPress}
       on:dblclick={startEditQty}
+      aria-label="Editar quantidade"
     >
       {#if editingQty}
         <input
@@ -164,7 +172,7 @@
       {:else}
         <span class="qty-num">{item.qty}</span>
       {/if}
-    </div>
+    </button>
     <button class="qty plus" on:click={() => itemsActions.changeQty(item.id, +1)}>+</button>
   </div>
 
@@ -229,14 +237,35 @@
     flex-shrink: 0;
   }
 
-  .body { flex: 1; min-width: 0; }
-  .name {
+  .body { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: flex-start; }
+  .name-btn {
+    background: none; border: none; padding: 0;
+    width: 100%; text-align: left; cursor: pointer;
+    font-family: inherit; color: inherit;
+  }
+  .name-txt {
+    display: block;
     font-size: 14px; font-weight: 600;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     transition: all 0.2s;
   }
-  .unit { font-size: 11px; color: var(--text3); margin-top: 2px; font-variant-numeric: tabular-nums; cursor: pointer; }
-  .price-link.missing { color: var(--red); font-weight: 800; text-decoration: underline; }
+  .unit-box { width: 100%; display: flex; }
+  .price-link { 
+    background: none; border: none; padding: 0;
+    font-size: 11px; color: var(--text3); margin-top: 2px; 
+    font-variant-numeric: tabular-nums; cursor: pointer; 
+    font-family: inherit;
+  }
+  .price-link.missing { 
+    color: var(--red); 
+    font-weight: 800; 
+    text-decoration: underline;
+    animation: alertPulse 1.5s infinite;
+  }
+  @keyframes alertPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
   .price-link:hover { color: var(--accent); text-decoration: underline; }
 
   .qty-wrap {
@@ -264,6 +293,8 @@
     min-width: 30px;
     display: flex; align-items: center; justify-content: center;
     cursor: pointer;
+    background: none; border: none; padding: 0;
+    font-family: inherit; color: inherit;
   }
 
   .qty-num {

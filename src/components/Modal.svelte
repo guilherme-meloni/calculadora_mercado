@@ -23,6 +23,10 @@
     if (e.key === 'Enter') confirm()
     if (e.key === 'Escape') close()
   }
+
+  function autofocus(node) {
+    node.focus();
+  }
 </script>
 
 <div class="modal-overlay" on:click|self={close} transition:fade={{ duration: 200 }}>
@@ -153,5 +157,8 @@
     color: white;
     box-shadow: 0 4px 12px rgba(194, 84, 110, 0.3);
   }
+  .btn-confirm:active { transform: scale(0.96); }
+</style>
+ }
   .btn-confirm:active { transform: scale(0.96); }
 </style>
