@@ -54,63 +54,58 @@
     justify-content: center;
     z-index: 100;
     pointer-events: none;
+    padding-bottom: env(safe-area-inset-bottom, 16px);
     /* Fix para flicker no iOS Safari */
     transform: translateZ(0);
     -webkit-transform: translateZ(0);
+    will-change: transform;
   }
-  .fade {
-    height: 36px;
-    background: linear-gradient(to top, var(--bg) 20%, transparent);
-    width: 100%;
-  }
+
   .inner {
     margin: 0 16px;
-    margin-bottom: max(env(safe-area-inset-bottom), 16px);
     background: var(--surface);
-    border: 1.5px solid var(--border2);
-    border-radius: 22px;
-    padding: 12px 18px;
+    border: 2px solid var(--border2);
+    border-radius: 26px;
+    padding: 14px 22px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    box-shadow: 0 8px 32px rgba(194, 84, 110, 0.15);
+    box-shadow: 0 12px 40px rgba(194, 84, 110, 0.25);
     pointer-events: all;
-    max-width: 480px;
+    max-width: 440px;
     width: calc(100vw - 32px);
-    /* Garante altura fixa para evitar flicker no resize de conteúdo */
-    min-height: 82px;
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
   
-  /* Desktop adjustment for width */
   @media (min-width: 768px) {
     .inner {
-      max-width: 800px;
+      max-width: 500px;
     }
   }
 
   .eye {
-    font-size: 9px; font-weight: 800;
-    letter-spacing: 0.14em; text-transform: uppercase;
+    font-size: 10px; font-weight: 800;
+    letter-spacing: 0.12em; text-transform: uppercase;
     color: var(--text3); margin-bottom: 2px;
   }
   .val {
-    font-size: 26px; font-weight: 800;
-    letter-spacing: -0.02em;
+    font-size: 28px; font-weight: 800;
+    letter-spacing: -0.03em;
     font-variant-numeric: tabular-nums;
     color: var(--text);
     line-height: 1;
   }
-  .meta { font-size: 11px; color: var(--text3); margin-top: 4px; font-variant-numeric: tabular-nums; font-weight: 600; }
+  .meta { font-size: 12px; color: var(--text3); margin-top: 4px; font-variant-numeric: tabular-nums; font-weight: 700; }
 
-  .right { display: flex; align-items: center; gap: 8px; }
+  .right { display: flex; align-items: center; gap: 10px; }
   
   .btn-share {
     background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    width: 42px; height: 42px;
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    width: 46px; height: 46px;
     display: flex; align-items: center; justify-content: center;
-    font-size: 18px;
+    font-size: 20px;
     cursor: pointer;
     transition: all 0.2s;
   }
@@ -120,27 +115,30 @@
     background: var(--green);
     color: white;
     border: none;
-    border-radius: 14px;
-    padding: 12px 20px;
+    border-radius: 16px;
+    padding: 0 24px;
+    height: 46px;
     font-family: inherit;
-    font-size: 14px; font-weight: 800;
+    font-size: 15px;
+    font-weight: 800;
     cursor: pointer;
-    box-shadow: 0 4px 12px rgba(107, 158, 107, 0.3);
+    box-shadow: 0 6px 16px rgba(107, 158, 107, 0.35);
     transition: all 0.2s;
   }
-  .btn-finalize:active { transform: scale(0.96); opacity: 0.9; }
+  .btn-finalize:active { transform: scale(0.96); box-shadow: 0 2px 8px rgba(107, 158, 107, 0.2); }
 
   .btn-clear {
     background: none;
-    border: 1px solid var(--border2);
-    border-radius: 11px;
-    padding: 9px 14px;
+    border: 1.5px solid var(--border2);
+    border-radius: 14px;
+    padding: 0 16px;
+    height: 46px;
     color: var(--text3);
     font-family: inherit;
-    font-size: 12px; font-weight: 600;
+    font-size: 13px;
+    font-weight: 700;
     cursor: pointer;
-    transition: all 0.15s;
-    -webkit-tap-highlight-color: transparent;
+    transition: all 0.2s;
   }
   .btn-clear:active {
     border-color: var(--red);

@@ -17,11 +17,7 @@
   }
 
   function restore(id) {
-    appStore.update(state => {
-      const list = state.lists.find(l => l.id === id)
-      if (list) list.archived = false
-      return { ...state, activeId: id }
-    })
+    appStore.reopenList(id)
   }
 </script>
 
@@ -30,48 +26,64 @@
     <div class="title">Histórico de Compras</div>
   </div>
 
-  {#each archivedLists as list (list.id)}
-    <div class="archived-card" class:expanded={expandedId === list.id}>
-      <button class="card-header" on:click={() => toggle(list.id)} aria-expanded={expandedId === list.id}>
-        <div class="info">
-          <div class="name">{list.name}</div>
-          <div class="meta">
-            {list.items.length} itens · {formatBRL(list.items.reduce((a, i) => a + i.preco * i.qty, 0))}
+  <div class="scroll-area">
+    {#each archivedLists as list (list.id)}
+      <div class="archived-card" class:expanded={expandedId === list.id}>
+        <button class="card-header" on:click={() => toggle(list.id)} aria-expanded={expandedId === list.id}>
+          <div class="info">
+            <div class="name">{list.name}</div>
+            <div class="meta">
+              {list.items.length} itens · {formatBRL(list.items.reduce((a, i) => a + i.preco * i.qty, 0))}
+            </div>
           </div>
-        </div>
-        <div class="arrow">{expandedId === list.id ? '▴' : '▾'}</div>
-      </button>
+          <div class="arrow">{expandedId === list.id ? '▴' : '▾'}</div>
+        </button>
 
-      {#if expandedId === list.id}
-        <div class="details" transition:slide>
-          <div class="item-list">
-            {#each list.items as item}
-              <div class="item-row">
-                <span>{item.cat} {item.nome} ({item.qty}x)</span>
-                <span>{formatBRL(item.preco * item.qty)}</span>
-              </div>
-            {/each}
+        {#if expandedId === list.id}
+          <div class="details" transition:slide>
+            <div class="item-list">
+              {#each list.items as item}
+                <div class="item-row">
+                  <span>{item.cat} {item.nome} ({item.qty}x)</span>
+                  <span>{formatBRL(item.preco * item.qty)}</span>
+                </div>
+              {/each}
+            </div>
+            <div class="actions">
+              <button class="btn-restore" on:click={() => restore(list.id)}>Reabrir</button>
+              <button class="btn-del" on:click={() => deleteHistory(list.id)}>Excluir</button>
+            </div>
           </div>
-          <div class="actions">
-            <button class="btn-restore" on:click={() => restore(list.id)}>Reabrir</button>
-            <button class="btn-del" on:click={() => deleteHistory(list.id)}>Excluir</button>
-          </div>
-        </div>
-      {/if}
-    </div>
-  {:else}
-    <div class="empty-msg">Nenhuma compra arquivada.</div>
-  {/each}
+        {/if}
+      </div>
+    {:else}
+      <div class="empty-msg">Nenhuma compra arquivada.</div>
+    {/each}
+  </div>
 </div>
 
 <style>
   .history {
     padding: 0 16px;
     margin-bottom: 24px;
+    max-height: 400px;
+    display: flex;
+    flex-direction: column;
   }
   .header {
     margin-bottom: 12px;
+    flex-shrink: 0;
   }
+  .scroll-area {
+    overflow-y: auto;
+    flex: 1;
+    padding-right: 4px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+  .scroll-area::-webkit-scrollbar { width: 4px; }
+  .scroll-area::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
   .title {
     font-size: 12px;
     font-weight: 700;

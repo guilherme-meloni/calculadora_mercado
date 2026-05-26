@@ -105,25 +105,29 @@
   /* ── Seletores de categoria ── */
   .cats {
     display: flex;
-    gap: 6px;
-    margin-bottom: 14px;
+    gap: 8px;
+    margin-bottom: 16px;
     overflow-x: auto;
     scrollbar-width: none;
     -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    padding: 4px 2px;
   }
   .cats::-webkit-scrollbar { display: none; }
 
   .cat {
-    background: #FFF8F5;
+    background: var(--surface2);
     border: 1.5px solid var(--border);
-    border-radius: 12px;
-    padding: 7px 11px;
-    font-size: 18px;
+    border-radius: 14px;
+    padding: 10px 14px;
+    font-size: 20px;
     cursor: pointer;
     flex-shrink: 0;
     line-height: 1;
-    transition: all 0.15s;
+    transition: all 0.2s;
     -webkit-tap-highlight-color: transparent;
+    scroll-snap-align: start;
   }
   .cat.active {
     border-color: var(--accent);

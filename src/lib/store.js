@@ -97,10 +97,21 @@ function createAppStore() {
             state.activeId = remaining[0].id
           } else {
             const newId = state.lists.reduce((max, l) => Math.max(max, l.id), 0) + 1
-            const newList = { id: newId, name: 'Minha Lista', items: [], isTemplate: false }
+            const newList = { id: newId, name: 'Minha Lista', items: [], isTemplate: false, archived: false }
             state.lists.push(newList)
             state.activeId = newId
           }
+        }
+        return { ...state }
+      })
+    },
+
+    reopenList(id) {
+      update(state => {
+        const list = state.lists.find(l => l.id === id)
+        if (list) {
+          list.archived = false
+          state.activeId = id
         }
         return { ...state }
       })
