@@ -46,7 +46,11 @@
     window.customEditItem = (item) => showModal({ 
       title: 'Editar Item', 
       type: 'edit-item', 
-      value: { nome: item.nome, preco: item.preco.toString().replace('.', ',') } 
+      value: { 
+        nome: item.nome, 
+        preco: item.preco.toString().replace('.', ','),
+        cat: item.cat || '🛒'
+      } 
     });
 
     const openImport = async () => {

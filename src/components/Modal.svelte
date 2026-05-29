@@ -75,6 +75,18 @@
               <label>Preço</label>
               <input type="text" inputmode="decimal" bind:value={value.preco} on:keydown={onKey} />
             </div>
+            <div class="field-group">
+              <label>Ícone / Categoria</label>
+              <div class="cat-selector">
+                {#each ['🛒','🥩','🥬','🥛','🧴','🍞','🧃','🧹','🐾','🍬','🍎','🍗','🍺','🍕'] as c}
+                  <button 
+                    class="cat-opt" 
+                    class:active={value.cat === c} 
+                    on:click={() => value.cat = c}
+                  >{c}</button>
+                {/each}
+              </div>
+            </div>
           </div>
         {/if}
       {/if}
@@ -88,6 +100,38 @@
 </div>
 
 <style>
+  /* ... estilos existentes ... */
+  .cat-selector {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+    background: var(--surface2);
+    padding: 10px;
+    border-radius: 16px;
+    border: 1.5px solid var(--border);
+  }
+  .cat-opt {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 0;
+    height: 36px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .cat-opt.active {
+    border-color: var(--accent);
+    background: var(--surface2);
+    transform: scale(1.1);
+    box-shadow: 0 4px 10px rgba(194, 84, 110, 0.15);
+  }
+  /* Ajuste no seletor existente para garantir que não quebre */
+  .field-group input {
+    margin-bottom: 4px;
+  }
+</style>
   .modal-overlay {
     position: fixed;
     top: 0; left: 0; right: 0; bottom: 0;

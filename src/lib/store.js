@@ -225,15 +225,18 @@ function createAppStore() {
           // Limpa R$, espaços e garante que o ponto seja o separador decimal
           let precoRaw = parts[1] || '0'
           precoRaw = precoRaw.replace('R$', '').replace(/\s/g, '').replace(',', '.')
-          const preco = parseFloat(precoRaw)
+          const totalLinha = parseFloat(precoRaw)
           const qty = parseInt(parts[2] || 1)
+          
+          // Se a IA deu o valor total da linha, calculamos o unitário para o app não multiplicar errado
+          const precoUnitario = qty > 0 ? (totalLinha / qty) : totalLinha
 
           if (nome) {
             lastId++
             newItems.push({
               id: lastId,
               nome,
-              preco: isNaN(preco) ? 0 : preco,
+              preco: isNaN(precoUnitario) ? 0 : precoUnitario,
               qty: isNaN(qty) ? 1 : qty,
               cat: '🛒',
               checked: false
