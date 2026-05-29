@@ -14,6 +14,7 @@
   </div>
 
   <nav class="topbar-nav" aria-label="Abrir painéis">
+    <button class="topbar-btn" on:click={() => window.dispatchEvent(new CustomEvent('open-import'))} aria-label="Importar Lista"> 📥 </button>
     <button class="topbar-btn" on:click={() => open('lists')}     aria-label="Minhas listas">   📋 </button>
     <button class="topbar-btn" on:click={() => open('templates')} aria-label="Templates">        ⭐ </button>
     <button class="topbar-btn" on:click={() => open('history')}   aria-label="Histórico">        🕐 </button>

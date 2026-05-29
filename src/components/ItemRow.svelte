@@ -7,102 +7,50 @@
 
   $: subtotal = item.preco * item.qty
 
-  let editingPrice = false
-  let tempPrice = ''
-  let priceInput
-
-  let editingQty = false
-  let tempQty = ''
-  let qtyInput
-
-  let editingName = false
-  let tempName = ''
-  let nameInput
-
-  function startEditPrice() {
-    tempPrice = item.preco.toString().replace('.', ',')
-    editingPrice = true
-    setTimeout(() => priceInput?.focus(), 50)
-  }
-
-  function savePrice() {
-    const p = parsePrice(tempPrice)
-    if (p >= 0) {
-      itemsActions.editPrice(item.id, p)
-    }
-    editingPrice = false
-  }
-
-  function startEditQty() {
-    tempQty = item.qty.toString()
-    editingQty = true
-    setTimeout(() => qtyInput?.focus(), 50)
-  }
-
-  function saveQty() {
-    const q = parseInt(tempQty)
-    if (!isNaN(q)) {
-      itemsActions.editQty(item.id, q)
-    }
-    editingQty = false
-  }
-
-  function startEditName() {
-    tempName = item.nome
-    editingName = true
-    setTimeout(() => nameInput?.focus(), 50)
-  }
-
-  function saveName() {
-    if (tempName.trim()) {
+  let longPressTimer
+  async function handleLongPress() {
+    const result = await window.customEditItem(item);
+    if (result) {
+      const p = parsePrice(result.preco);
       appStore.update(state => {
         const list = state.lists.find(l => l.id === state.activeId)
         if (list) {
-          list.items = list.items.map(i => i.id === item.id ? { ...i, nome: tempName.trim() } : i)
+          list.items = list.items.map(i => i.id === item.id ? { ...i, nome: result.nome.trim(), preco: p } : i)
         }
         return { ...state }
       })
     }
-    editingName = false
   }
 
-  function onKeyPrice(e) {
-    if (e.key === 'Enter') savePrice()
-    if (e.key === 'Escape') editingPrice = false
-  }
-
-  function onKeyQty(e) {
-    if (e.key === 'Enter') saveQty()
-    if (e.key === 'Escape') editingQty = false
-  }
-
-  function onKeyName(e) {
-    if (e.key === 'Enter') saveName()
-    if (e.key === 'Escape') editingName = false
-  }
-
-  let longPressTimer
   function startLongPress() {
-    longPressTimer = setTimeout(startEditQty, 600)
+    longPressTimer = setTimeout(handleLongPress, 600)
   }
   function cancelLongPress() {
     clearTimeout(longPressTimer)
   }
   function toggleChecked() {
     if (!item.checked && item.preco <= 0) {
-      startEditPrice();
+      handleLongPress();
       return;
     }
     itemsActions.toggleChecked(item.id)
   }
 </script>
 
-<div class="item" class:checked={item.checked && !isTemplate} class:is-template={isTemplate}>
+<div 
+  class="item" 
+  class:checked={item.checked && !isTemplate} 
+  class:is-template={isTemplate}
+  on:mousedown={startLongPress}
+  on:mouseup={cancelLongPress}
+  on:touchstart={startLongPress}
+  on:touchend={cancelLongPress}
+>
   {#if !isTemplate}
     <button 
       class="check-btn" 
       class:is-checked={item.checked}
-      on:click={toggleChecked}
+      on:click|stopPropagation={toggleChecked}
       aria-label="Marcar como pego"
     >
       <div class="check-inner">
@@ -114,71 +62,28 @@
   <div class="ico">{item.cat}</div>
   
   <div class="body">
-    <button class="name-btn" on:click={startEditName}>
-      {#if editingName}
-        <input
-          bind:this={nameInput}
-          type="text"
-          bind:value={tempName}
-          on:blur={saveName}
-          on:keydown={onKeyName}
-          class="inline-input name-input"
-        />
-      {:else}
-        <span class="name-txt">{item.nome}</span>
-      {/if}
-    </button>
+    <div class="name-btn">
+      <span class="name-txt">{item.nome}</span>
+    </div>
     <div class="unit-box">
-      {#if editingPrice}
-        <input
-          bind:this={priceInput}
-          type="text"
-          inputmode="decimal"
-          bind:value={tempPrice}
-          on:blur={savePrice}
-          on:keydown={onKeyPrice}
-          class="inline-input"
-        />
-      {:else}
-        <button class="price-link" class:missing={item.preco <= 0} on:click={startEditPrice}>
-          <span class="price">{item.preco > 0 ? formatBRL(item.preco) : 'Definir preço'}</span> / un
-        </button>
-      {/if}
+      <button class="price-link" class:missing={item.preco <= 0} on:click|stopPropagation={handleLongPress}>
+        <span class="price">{item.preco > 0 ? formatBRL(item.preco) : 'Definir preço'}</span> / un
+      </button>
     </div>
   </div>
 
-  <div class="qty-wrap">
+  <div class="qty-wrap" on:mousedown|stopPropagation on:touchstart|stopPropagation>
     <button class="qty minus" on:click={() => itemsActions.changeQty(item.id, -1)}>−</button>
-    <button 
-      class="qty-val" 
-      on:mousedown={startLongPress} 
-      on:mouseup={cancelLongPress}
-      on:touchstart={startLongPress}
-      on:touchend={cancelLongPress}
-      on:dblclick={startEditQty}
-      aria-label="Editar quantidade"
-    >
-      {#if editingQty}
-        <input
-          bind:this={qtyInput}
-          type="number"
-          inputmode="numeric"
-          bind:value={tempQty}
-          on:blur={saveQty}
-          on:keydown={onKeyQty}
-          class="inline-input qty-input"
-        />
-      {:else}
-        <span class="qty-num">{item.qty}</span>
-      {/if}
-    </button>
+    <div class="qty-val">
+      <span class="qty-num">{item.qty}</span>
+    </div>
     <button class="qty plus" on:click={() => itemsActions.changeQty(item.id, +1)}>+</button>
   </div>
 
   <div class="sub-box">
     <span class="sub price">{formatBRL(subtotal)}</span>
   </div>
-  <button class="del" on:click={() => itemsActions.remove(item.id)} aria-label="Remover item">✕</button>
+  <button class="del" on:click|stopPropagation={() => itemsActions.remove(item.id)} aria-label="Remover item">✕</button>
 </div>
 
 <style>

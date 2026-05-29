@@ -43,6 +43,23 @@
   onMount(() => {
     window.customConfirm = (msg) => showModal({ title: 'Confirmação', message: msg, type: 'confirm' });
     window.customPrompt = (msg) => showModal({ title: 'Novo Item', message: msg, type: 'prompt' });
+    window.customEditItem = (item) => showModal({ 
+      title: 'Editar Item', 
+      type: 'edit-item', 
+      value: { nome: item.nome, preco: item.preco.toString().replace('.', ',') } 
+    });
+
+    const openImport = async () => {
+      const text = await showModal({ 
+        title: 'Importar Lista', 
+        message: 'Cole abaixo o texto gerado pela IA ou sua lista manual.',
+        type: 'import' 
+      });
+      if (text) appStore.importItems(text);
+    };
+
+    window.addEventListener('open-import', openImport);
+    return () => window.removeEventListener('open-import', openImport);
   });
 
   async function handleShortcuts() {

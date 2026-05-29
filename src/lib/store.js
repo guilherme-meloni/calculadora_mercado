@@ -206,6 +206,41 @@ function createAppStore() {
         if (list) list.name = newName
         return { ...state }
       })
+    },
+
+    importItems(text) {
+      update(state => {
+        const list = state.lists.find(l => l.id === state.activeId)
+        if (!list) return state
+
+        const lines = text.split('\n')
+        const newItems = []
+        let lastId = list.items.reduce((max, i) => Math.max(max, i.id), 0)
+
+        lines.forEach(line => {
+          if (!line.trim()) return
+          // Formato esperado: Nome; Preço; Quantidade
+          const parts = line.split(';').map(p => p.trim())
+          const nome = parts[0]
+          const preco = parseFloat(parts[1]?.replace(',', '.') || 0)
+          const qty = parseInt(parts[2] || 1)
+
+          if (nome) {
+            lastId++
+            newItems.push({
+              id: lastId,
+              nome,
+              preco: isNaN(preco) ? 0 : preco,
+              qty: isNaN(qty) ? 1 : qty,
+              cat: '🛒',
+              checked: false
+            })
+          }
+        })
+
+        list.items = [...newItems, ...list.items]
+        return { ...state }
+      })
     }
   }
 }

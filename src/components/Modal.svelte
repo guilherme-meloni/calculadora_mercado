@@ -6,8 +6,9 @@
   export let message = ''
   export let confirmText = 'Confirmar'
   export let cancelText = 'Cancelar'
-  export let type = 'confirm' // 'confirm' ou 'prompt'
+  export let type = 'confirm' // 'confirm', 'prompt', 'import' ou 'edit-item'
   export let value = ''
+  export let fields = [] // Para type 'edit-item'
 
   const dispatch = createEventDispatcher()
 
@@ -20,19 +21,18 @@
   }
 
   function onKey(e) {
-    if (e.key === 'Enter') confirm()
+    if (e.key === 'Enter' && type !== 'import') confirm()
     if (e.key === 'Escape') close()
   }
 
   function autofocus(node) {
-    node.focus();
+    setTimeout(() => node.focus(), 50);
   }
 </script>
 
 <div 
   class="modal-overlay" 
-  on:click|self={close} 
-  on:keydown={e => e.key === 'Escape' && close()} 
+  on:mousedown|self={close} 
   transition:fade={{ duration: 200 }} 
   role="button" 
   tabindex="-1"
@@ -56,6 +56,27 @@
           placeholder="Digite aqui..."
           use:autofocus
         />
+      {:else}
+        {#if type === 'import'}
+          <textarea
+            bind:value
+            placeholder="Formato: Nome;Preço;Quantidade&#10;Ex: Leite;5,50;2&#10;Suco;3,00;1"
+            rows="6"
+            use:autofocus
+          ></textarea>
+          <p class="hint">Dica: Use ponto e vírgula para separar os dados.</p>
+        {:else if type === 'edit-item'}
+          <div class="edit-fields">
+            <div class="field-group">
+              <label>Nome do Produto</label>
+              <input type="text" bind:value={value.nome} use:autofocus on:keydown={onKey} />
+            </div>
+            <div class="field-group">
+              <label>Preço</label>
+              <input type="text" inputmode="decimal" bind:value={value.preco} on:keydown={onKey} />
+            </div>
+          </div>
+        {/if}
       {/if}
     </div>
 
@@ -70,8 +91,8 @@
   .modal-overlay {
     position: fixed;
     top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(60, 32, 48, 0.4);
-    backdrop-filter: blur(4px);
+    background: rgba(40, 20, 30, 0.6);
+    backdrop-filter: blur(8px);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -84,29 +105,34 @@
     border: 1.5px solid var(--border);
     border-radius: 28px;
     width: 100%;
-    max-width: 360px;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+    max-width: 380px;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.25);
     overflow: hidden;
   }
-
+  
   .header {
-    padding: 20px 24px 10px;
+    padding: 24px 24px 10px;
     display: flex;
     justify-content: space-between;
     align-items: center;
   }
 
   .title {
-    font-size: 18px;
-    font-weight: 800;
+    font-size: 20px;
+    font-weight: 900;
     color: var(--text);
+    letter-spacing: -0.02em;
   }
 
   .close-top {
-    background: none; border: none;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    width: 32px; height: 32px;
+    border-radius: 50%;
     color: var(--text3);
-    font-size: 18px;
+    font-size: 14px;
     cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
   }
 
   .body {
@@ -117,52 +143,87 @@
     font-size: 15px;
     color: var(--text2);
     line-height: 1.5;
-    margin-bottom: 16px;
+    margin-bottom: 20px;
   }
 
-  input {
+  input, textarea {
     width: 100%;
-    background: var(--bg);
+    background: var(--surface2);
     border: 1.5px solid var(--border);
-    border-radius: 14px;
-    padding: 14px;
+    border-radius: 16px;
+    padding: 14px 18px;
     font-family: inherit;
     font-size: 16px;
+    color: var(--text);
     outline: none;
-    transition: border-color 0.2s;
+    transition: all 0.2s;
   }
-  input:focus {
+  input:focus, textarea:focus {
     border-color: var(--accent);
+    background: var(--surface);
+    box-shadow: 0 0 0 4px rgba(194, 84, 110, 0.1);
+  }
+
+  textarea {
+    resize: none;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  .hint {
+    font-size: 12px;
+    color: var(--text3);
+    margin-top: 10px;
+    font-weight: 600;
+  }
+
+  .edit-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .field-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .field-group label {
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: var(--text3);
+    letter-spacing: 0.05em;
+    padding-left: 4px;
   }
 
   .footer {
-    padding: 16px 24px 24px;
+    padding: 0 24px 24px;
     display: flex;
     gap: 12px;
   }
 
   button {
     flex: 1;
-    padding: 14px;
-    border-radius: 14px;
+    padding: 16px;
+    border-radius: 18px;
     font-family: inherit;
-    font-weight: 700;
-    font-size: 14px;
+    font-weight: 800;
+    font-size: 15px;
     cursor: pointer;
     transition: all 0.2s;
   }
 
   .btn-cancel {
-    background: var(--bg);
+    background: var(--surface2);
     border: 1.5px solid var(--border);
-    color: var(--text3);
+    color: var(--text2);
   }
 
   .btn-confirm {
     background: var(--accent);
     border: none;
     color: white;
-    box-shadow: 0 4px 12px rgba(194, 84, 110, 0.3);
+    box-shadow: 0 6px 20px rgba(194, 84, 110, 0.3);
   }
   .btn-confirm:active { transform: scale(0.96); }
 </style>
