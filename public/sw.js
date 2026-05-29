@@ -1,5 +1,5 @@
-const CACHE_NAME = 'marketmallow-v1';
-const ASSETS = [
+const CACHE_NAME = 'marketmallow-v2';
+const STATIC_ASSETS = [
   '/',
   '/index.html',
   '/favicon.png',
@@ -8,9 +8,10 @@ const ASSETS = [
 
 // Instalação: Cacheia arquivos estáticos básicos
 self.addEventListener('install', (event) => {
+  self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(ASSETS);
+      return cache.addAll(STATIC_ASSETS);
     })
   );
 });
@@ -24,14 +25,32 @@ self.addEventListener('activate', (event) => {
       );
     })
   );
+  self.clients.claim();
 });
 
-// Estratégia: Network First, falling back to cache
-// Como é uma calculadora de mercado, queremos o código mais novo, mas se estiver sem net, usa o cache.
+// Estratégia Stale-While-Revalidate: 
+// Serve do cache imediatamente (rápido/offline) e atualiza o cache em background se houver net.
 self.addEventListener('fetch', (event) => {
+  // Ignora requisições de outras origens (ex: fontes externas ou analytics) se houver
+  if (!event.request.url.startsWith(self.location.origin)) return;
+
   event.respondWith(
-    fetch(event.request).catch(() => {
-      return caches.match(event.request);
+    caches.match(event.request).then((cachedResponse) => {
+      const fetchPromise = fetch(event.request).then((networkResponse) => {
+        // Se a resposta for válida, salva no cache
+        if (networkResponse && networkResponse.status === 200) {
+          const responseToCache = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, responseToCache);
+          });
+        }
+        return networkResponse;
+      }).catch(() => {
+        // Se falhar o fetch e não tiver no cache, não tem o que fazer
+      });
+
+      // Retorna o cache se existir, se não espera o fetch
+      return cachedResponse || fetchPromise;
     })
   );
 });
