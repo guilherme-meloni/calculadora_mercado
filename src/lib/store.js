@@ -208,6 +208,18 @@ function createAppStore() {
       })
     },
 
+    editItem(id, newData) {
+      update(state => {
+        const list = state.lists.find(l => l.id === state.activeId)
+        if (list) {
+          list.items = list.items.map(i => 
+            i.id === id ? { ...i, ...newData } : i
+          )
+        }
+        return { ...state }
+      })
+    },
+
     importItems(text) {
       update(state => {
         const list = state.lists.find(l => l.id === state.activeId)

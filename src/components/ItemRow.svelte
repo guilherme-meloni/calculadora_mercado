@@ -12,17 +12,11 @@
     const result = await window.customEditItem(item);
     if (result) {
       const p = parsePrice(result.preco);
-      appStore.update(state => {
-        const list = state.lists.find(l => l.id === state.activeId)
-        if (list) {
-          list.items = list.items.map(i => 
-            i.id === item.id 
-              ? { ...i, nome: result.nome.trim(), preco: p, cat: result.cat } 
-              : i
-          )
-        }
-        return { ...state }
-      })
+      appStore.editItem(item.id, {
+        nome: result.nome.trim(),
+        preco: p,
+        cat: result.cat
+      });
     }
   }
 
