@@ -292,13 +292,26 @@ export const appStore = createAppStore()
 
 // Navegação e UI
 export const activeView = writable('shopping') // 'shopping' | 'lists' | 'templates' | 'history'
+export const sortOrder = writable('default') // 'default' | 'name' | 'price-asc' | 'price-desc'
 export const bottomSheetOpen = writable(false)
 export const bottomSheetContent = writable(null) // 'lists' | 'templates' | 'history'
 
 // Derived store para os itens da lista ativa (compatibilidade com componentes existentes)
-export const items = derived(appStore, $state => {
+export const items = derived([appStore, sortOrder], ([$state, $sort]) => {
   const activeList = $state.lists.find(l => l.id === $state.activeId)
-  return activeList ? activeList.items : []
+  if (!activeList) return []
+  
+  let listItems = [...activeList.items]
+  
+  if ($sort === 'name') {
+    listItems.sort((a, b) => a.nome.localeCompare(b.nome))
+  } else if ($sort === 'price-asc') {
+    listItems.sort((a, b) => (a.preco * a.qty) - (b.preco * b.qty))
+  } else if ($sort === 'price-desc') {
+    listItems.sort((a, b) => (b.preco * b.qty) - (a.preco * a.qty))
+  }
+  
+  return listItems
 })
 
 export const activeList = derived(appStore, $state => {

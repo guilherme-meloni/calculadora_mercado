@@ -8,7 +8,6 @@
   export let cancelText = 'Cancelar'
   export let type = 'confirm' // 'confirm', 'prompt', 'import' ou 'edit-item'
   export let value = ''
-  export let fields = [] // Para type 'edit-item'
 
   const dispatch = createEventDispatcher()
 
@@ -56,39 +55,46 @@
           placeholder="Digite aqui..."
           use:autofocus
         />
-      {:else}
-        {#if type === 'import'}
-          <textarea
-            bind:value
-            placeholder="Formato: Nome;Preço;Quantidade&#10;Ex: Leite;5,50;2&#10;Suco;3,00;1"
-            rows="6"
-            use:autofocus
-          ></textarea>
-          <p class="hint">Dica: Use ponto e vírgula para separar os dados.</p>
-        {:else if type === 'edit-item'}
-          <div class="edit-fields">
-            <div class="field-group">
-              <label>Nome do Produto</label>
-              <input type="text" bind:value={value.nome} use:autofocus on:keydown={onKey} />
+      {:else if type === 'import'}
+        <textarea
+          bind:value
+          placeholder="Formato: Nome;Preço;Quantidade&#10;Ex: Leite;5,50;2&#10;Suco;3,00;1"
+          rows="6"
+          use:autofocus
+        ></textarea>
+        <p class="hint">Dica: Use ponto e vírgula para separar os dados.</p>
+      {:else if type === 'edit-item'}
+        <div class="edit-fields">
+          <div class="field-group">
+            <label>Nome do Produto</label>
+            <input type="text" bind:value={value.nome} use:autofocus on:keydown={onKey} />
+          </div>
+          <div class="field-group">
+            <label>Preço</label>
+            <input type="text" inputmode="decimal" bind:value={value.preco} on:keydown={onKey} />
+          </div>
+          <div class="field-group">
+            <label>Ícone / Categoria</label>
+            <div class="cat-selector">
+              {#each ['🛒','🥩','🥬','🥛','🧴','🍞','🧃','🧹','🐾','🍬','🍎','🍗','🍺','🍕'] as c}
+                <button 
+                  class="cat-opt" 
+                  class:active={value.cat === c} 
+                  on:click={() => value.cat = c}
+                >{c}</button>
+              {/each}
             </div>
-            <div class="field-group">
-              <label>Preço</label>
-              <input type="text" inputmode="decimal" bind:value={value.preco} on:keydown={onKey} />
-            </div>
-            <div class="field-group">
-              <label>Ícone / Categoria</label>
-              <div class="cat-selector">
-                {#each ['🛒','🥩','🥬','🥛','🧴','🍞','🧃','🧹','🐾','🍬','🍎','🍗','🍺','🍕'] as c}
-                  <button 
-                    class="cat-opt" 
-                    class:active={value.cat === c} 
-                    on:click={() => value.cat = c}
-                  >{c}</button>
-                {/each}
-              </div>
+            <div class="custom-emoji">
+              <label>Emoji Personalizado</label>
+              <input 
+                type="text" 
+                bind:value={value.cat} 
+                placeholder="Cole um emoji aqui..." 
+                maxlength="2"
+              />
             </div>
           </div>
-        {/if}
+        </div>
       {/if}
     </div>
 
@@ -100,38 +106,6 @@
 </div>
 
 <style>
-  /* ... estilos existentes ... */
-  .cat-selector {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 8px;
-    background: var(--surface2);
-    padding: 10px;
-    border-radius: 16px;
-    border: 1.5px solid var(--border);
-  }
-  .cat-opt {
-    background: var(--surface);
-    border: 1.5px solid var(--border);
-    border-radius: 10px;
-    padding: 0;
-    height: 36px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 18px;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .cat-opt.active {
-    border-color: var(--accent);
-    background: var(--surface2);
-    transform: scale(1.1);
-    box-shadow: 0 4px 10px rgba(194, 84, 110, 0.15);
-  }
-  /* Ajuste no seletor existente para garantir que não quebre */
-  .field-group input {
-    margin-bottom: 4px;
-  }
-
   .modal-overlay {
     position: fixed;
     top: 0; left: 0; right: 0; bottom: 0;
@@ -238,6 +212,51 @@
     color: var(--text3);
     letter-spacing: 0.05em;
     padding-left: 4px;
+  }
+
+  .cat-selector {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+    background: var(--surface2);
+    padding: 10px;
+    border-radius: 16px;
+    border: 1.5px solid var(--border);
+  }
+  .cat-opt {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 0;
+    height: 36px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .cat-opt.active {
+    border-color: var(--accent);
+    background: var(--surface2);
+    transform: scale(1.1);
+    box-shadow: 0 4px 10px rgba(194, 84, 110, 0.15);
+  }
+
+  .custom-emoji {
+    margin-top: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .custom-emoji label {
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--text3);
+    text-transform: uppercase;
+  }
+  .custom-emoji input {
+    padding: 10px 14px;
+    font-size: 14px;
+    text-align: center;
   }
 
   .footer {

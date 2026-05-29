@@ -1,5 +1,5 @@
 <script>
-  import { items, activeList } from '../lib/store.js'
+  import { items, activeList, sortOrder } from '../lib/store.js'
   import ItemRow from './ItemRow.svelte'
 
   $: isTemplate = $activeList?.isTemplate || false
@@ -14,7 +14,19 @@
     </div>
   </div>
 {:else}
-  <div class="sec">{$activeList?.name || 'Lista de compras'}</div>
+  <div class="list-header">
+    <div class="sec">{$activeList?.name || 'Lista de compras'}</div>
+    
+    <div class="sort-box">
+      <select bind:value={$sortOrder} class="sort-select">
+        <option value="default">Padrão</option>
+        <option value="name">Alfabética</option>
+        <option value="price-desc">R$ Maior</option>
+        <option value="price-asc">R$ Menor</option>
+      </select>
+    </div>
+  </div>
+
   <div class="list">
     {#each $items as item (item.id)}
       <ItemRow {item} {isTemplate} />
@@ -23,6 +35,54 @@
 {/if}
 
 <style>
+  .list-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    padding: 2px 16px 10px;
+    gap: 12px;
+  }
+
+  .sec {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--text3);
+    padding-bottom: 4px;
+  }
+  .sec::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .sort-box {
+    margin-bottom: 2px;
+  }
+
+  .sort-select {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 4px 8px;
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--text2);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    outline: none;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .sort-select:focus { border-color: var(--accent); }
+
   .empty {
     display: flex;
     flex-direction: column;

@@ -26,6 +26,11 @@
   function onKey(e) {
     if (e.key === 'Enter') add()
   }
+
+  async function openEmojiPicker() {
+    const emoji = await window.customPrompt('Qual emoji deseja usar?');
+    if (emoji) selCat = emoji;
+  }
 </script>
 
 <div class="card pop-in" class:focused class:shake>
@@ -38,6 +43,9 @@
         title={c}
       >{c}</button>
     {/each}
+    <button class="cat cat-custom" on:click={openEmojiPicker} title="Emoji Personalizado">
+      🎨
+    </button>
   </div>
 
   <div class="fields">
