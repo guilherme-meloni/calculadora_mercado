@@ -230,30 +230,55 @@ function createAppStore() {
         let lastId = list.items.reduce((max, i) => Math.max(max, i.id), 0)
 
         lines.forEach(line => {
-          if (!line.trim()) return
-          // Formato esperado: Nome; Preço; Quantidade
+          if (!line.trim() || !line.includes(';')) return
+          
           const parts = line.split(';').map(p => p.trim())
           const nome = parts[0]
-          // Limpa R$, espaços e garante que o ponto seja o separador decimal
-          let precoRaw = parts[1] || '0'
-          precoRaw = precoRaw.replace('R$', '').replace(/\s/g, '').replace(',', '.')
-          const totalLinha = parseFloat(precoRaw)
-          const qty = parseInt(parts[2] || 1)
-          
-          // Se a IA deu o valor total da linha, calculamos o unitário para o app não multiplicar errado
-          const precoUnitario = qty > 0 ? (totalLinha / qty) : totalLinha
+          if (!nome) return
 
-          if (nome) {
-            lastId++
-            newItems.push({
-              id: lastId,
-              nome,
-              preco: isNaN(precoUnitario) ? 0 : precoUnitario,
-              qty: isNaN(qty) ? 1 : qty,
-              cat: '🛒',
-              checked: false
-            })
+          // Pega os outros dois valores (pode ser preco/qty ou qty/preco)
+          let v1 = parts[1] || '0'
+          let v2 = parts[2] || '1'
+
+          // Função para limpar e converter número
+          const cleanNum = (s) => parseFloat(s.replace('R$', '').replace(/\s/g, '').replace(',', '.')) || 0
+
+          let n1 = cleanNum(v1)
+          let n2 = cleanNum(v2)
+
+          let preco = 0
+          let qty = 1
+
+          // Lógica Inteligente de Detecção:
+          // 1. Se um tem vírgula/ponto e o outro não, o decimal é o preço
+          const hasDecimal1 = v1.includes(',') || v1.includes('.')
+          const hasDecimal2 = v2.includes(',') || v2.includes('.')
+
+          if (hasDecimal1 && !hasDecimal2) {
+            preco = n1; qty = n2;
+          } else if (hasDecimal2 && !hasDecimal1) {
+            preco = n2; qty = n1;
+          } else if (v1.includes('R$')) {
+            preco = n1; qty = n2;
+          } else if (v2.includes('R$')) {
+            preco = n2; qty = n1;
+          } else {
+            // Se ambos forem parecidos, assume o padrão: Nome; Preço; Qtd
+            preco = n1; qty = n2;
           }
+
+          // Segurança para quantidade
+          if (qty <= 0) qty = 1
+
+          lastId++
+          newItems.push({
+            id: lastId,
+            nome,
+            preco: preco,
+            qty: qty,
+            cat: '🛒',
+            checked: false
+          })
         })
 
         list.items = [...newItems, ...list.items]
