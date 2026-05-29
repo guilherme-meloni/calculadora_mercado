@@ -93,7 +93,7 @@
     border-radius: var(--radius-md);
     padding: 10px;
     display: grid;
-    grid-template-columns: auto auto 1fr auto auto auto;
+    grid-template-columns: auto auto minmax(0, 1fr) auto auto auto;
     align-items: center;
     gap: 8px;
     transition: all 0.2s;

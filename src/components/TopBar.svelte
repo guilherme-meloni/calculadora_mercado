@@ -43,21 +43,24 @@
   display: flex;
   align-items: center;
   gap: 8px;
+  min-width: 0;
+  flex: 1;
 }
-.topbar-logo { font-size: 1.4rem; }
+.topbar-logo { font-size: 1.4rem; flex-shrink: 0; }
 .topbar-listname {
   font-size: 0.95rem;
   font-weight: 800;
   color: var(--text);
-  max-width: 160px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  flex: 1;
 }
 
 .topbar-nav {
   display: flex;
   gap: 6px;
+  flex-shrink: 0;
 }
 .topbar-btn {
   width: 38px;

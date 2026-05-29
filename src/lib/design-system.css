@@ -93,6 +93,14 @@ body, html, #app, .app {
 * {
   -webkit-tap-highlight-color: transparent;
   box-sizing: border-box;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
+input, textarea {
+  user-select: text !important;
+  -webkit-user-select: text !important;
 }
 
 /* Scrollbar invisível mas funcional */

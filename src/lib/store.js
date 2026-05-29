@@ -222,7 +222,10 @@ function createAppStore() {
           // Formato esperado: Nome; Preço; Quantidade
           const parts = line.split(';').map(p => p.trim())
           const nome = parts[0]
-          const preco = parseFloat(parts[1]?.replace(',', '.') || 0)
+          // Limpa R$, espaços e garante que o ponto seja o separador decimal
+          let precoRaw = parts[1] || '0'
+          precoRaw = precoRaw.replace('R$', '').replace(/\s/g, '').replace(',', '.')
+          const preco = parseFloat(precoRaw)
           const qty = parseInt(parts[2] || 1)
 
           if (nome) {
