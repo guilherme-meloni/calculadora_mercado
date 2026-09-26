@@ -3,7 +3,7 @@
   import { appStore, items, bottomSheetOpen, activeView } from './lib/store.js'
   import TopBar from './components/TopBar.svelte'
   import BottomSheet from './components/BottomSheet.svelte'
-  import TotalBar from './components/TotalBar.svelte'
+  import BottomNav from './components/BottomNav.svelte'
   import InputCard from './components/InputCard.svelte'
   import ItemList from './components/ItemList.svelte'
   import Sidebar from './components/Sidebar.svelte'
@@ -105,7 +105,6 @@
       {#if $activeView === 'home'}
         <Home />
       {:else}
-        <button class="voltar" on:click={() => activeView.set('home')}>← Início</button>
         <InputCard />
         <ItemList />
       {/if}
@@ -113,8 +112,8 @@
     </main>
   </div>
 
-  {#if $activeView === 'calculadora' && !$bottomSheetOpen}
-    <TotalBar />
+  {#if !$bottomSheetOpen}
+    <BottomNav />
   {/if}
   <BottomSheet />
 
@@ -150,20 +149,8 @@
   }
 
   .footer-spacer {
-    height: 110px;
+    height: 90px;
   }
-
-  .voltar {
-    align-self: flex-start;
-    background: none;
-    border: none;
-    color: var(--text2);
-    font-weight: 800;
-    font-size: 0.9rem;
-    padding: 6px 4px;
-    cursor: pointer;
-  }
-  .voltar:active { opacity: 0.6; }
 
   /* Desktop Layout */
   @media (min-width: 768px) {

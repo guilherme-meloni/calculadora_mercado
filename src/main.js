@@ -1,3 +1,4 @@
+import './lib/tailwind.css'
 import './lib/design-system.css'
 import App from './App.svelte'
 

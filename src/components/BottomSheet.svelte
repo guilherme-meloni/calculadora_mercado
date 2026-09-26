@@ -5,6 +5,7 @@
   import HistoryPanel   from './panels/HistoryPanel.svelte';
   import ScannerPanel   from './panels/ScannerPanel.svelte';
   import ProductsPanel  from './panels/ProductsPanel.svelte';
+  import InputCard      from './InputCard.svelte';
 
   const panels = {
     lists:     { title: '📋 Minhas Listas',  comp: ListsPanel     },
@@ -12,6 +13,7 @@
     history:   { title: '🕐 Histórico',      comp: HistoryPanel   },
     scanner:   { title: '📷 Escanear',        comp: ScannerPanel   },
     products:  { title: '📦 Produtos',        comp: ProductsPanel  },
+    manual:    { title: '⌨️ Adicionar produto', comp: InputCard    },
   };
 
   $: panel = panels[$bottomSheetContent] ?? null;

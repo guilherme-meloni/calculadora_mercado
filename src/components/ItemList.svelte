@@ -1,6 +1,6 @@
 <script>
   import { items, activeList, sortOrder } from '../lib/store.js'
-  import ItemRow from './ItemRow.svelte'
+  import ProductCard from './ProductCard.svelte'
 
   $: isTemplate = $activeList?.isTemplate || false
 </script>
@@ -29,7 +29,7 @@
 
   <div class="list">
     {#each $items as item (item.id)}
-      <ItemRow {item} {isTemplate} />
+      <ProductCard {item} {isTemplate} />
     {/each}
   </div>
 {/if}

@@ -109,8 +109,7 @@
   .modal-overlay {
     position: fixed;
     top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(40, 20, 30, 0.6);
-    backdrop-filter: blur(8px);
+    background: rgba(40, 20, 30, 0.65);
     display: flex;
     align-items: center;
     justify-content: center;

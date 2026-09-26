@@ -1,6 +1,7 @@
 <script>
   import { createEventDispatcher, onDestroy, tick } from 'svelte'
   import { BrowserMultiFormatReader } from '@zxing/browser'
+  import { success as vibrarSucesso, error as vibrarErro } from '../lib/haptics.js'
   const dispatch = createEventDispatcher()
 
   const CHAVE_STORAGE = 'mercado-calc:camera-preferida-id'
@@ -75,6 +76,7 @@
       }
     } catch (e) {
       lendo = false
+      vibrarErro()
       if (e?.name === 'NotAllowedError') {
         erro = 'Permissão de câmera negada. Libera o acesso nas configurações do navegador.'
       } else if (e?.name === 'NotFoundError') {
@@ -88,6 +90,7 @@
   function aoDecodificar(result) {
     if (result && !leitorJaLeu) {
       leitorJaLeu = true
+      vibrarSucesso()
       // funcionou! guarda essa câmera como a certa pra esse aparelho, não pergunta mais
       if (dispositivos[indiceAtual]) salvarCameraPreferida(dispositivos[indiceAtual].deviceId)
       const codigo = result.getText()
