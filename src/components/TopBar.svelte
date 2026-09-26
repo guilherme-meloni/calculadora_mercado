@@ -1,23 +1,15 @@
 <script>
-  import { activeList, bottomSheetOpen, bottomSheetContent } from '../lib/store.js';
-
-  function open(panel) {
-    bottomSheetContent.set(panel);
-    bottomSheetOpen.set(true);
-  }
+  import { activeList, activeView } from '../lib/store.js';
 </script>
 
 <header class="topbar">
-  <div class="topbar-left">
-    <span class="topbar-logo" aria-hidden="true">🍬</span>
+  <button class="topbar-left" on:click={() => activeView.set('home')} aria-label="Voltar ao início">
+    <img src="/favicon.png" alt="MarketMallow" class="topbar-logo" />
     <span class="topbar-listname">{$activeList?.name || 'MarketMallow'}</span>
-  </div>
+  </button>
 
-  <nav class="topbar-nav" aria-label="Abrir painéis">
-    <button class="topbar-btn" on:click={() => window.dispatchEvent(new CustomEvent('open-import'))} aria-label="Importar Lista"> 📥 </button>
-    <button class="topbar-btn" on:click={() => open('lists')}     aria-label="Minhas listas">   📋 </button>
-    <button class="topbar-btn" on:click={() => open('templates')} aria-label="Templates">        ⭐ </button>
-    <button class="topbar-btn" on:click={() => open('history')}   aria-label="Histórico">        🕐 </button>
+  <nav class="topbar-nav" aria-label="Início">
+    <button class="topbar-btn" on:click={() => activeView.set('home')} aria-label="Início"> 🏠 </button>
   </nav>
 </header>
 
@@ -45,8 +37,14 @@
   gap: 8px;
   min-width: 0;
   flex: 1;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
 }
-.topbar-logo { font-size: 1.4rem; flex-shrink: 0; }
+.topbar-logo { width: 28px; height: 28px; border-radius: 8px; object-fit: cover; flex-shrink: 0; }
 .topbar-listname {
   font-size: 0.95rem;
   font-weight: 800;

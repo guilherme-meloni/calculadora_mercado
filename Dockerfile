@@ -5,6 +5,8 @@ WORKDIR /app
 COPY package.json ./
 RUN npm install
 COPY . .
+ARG VITE_MERCADO_API_URL
+ENV VITE_MERCADO_API_URL=$VITE_MERCADO_API_URL
 RUN npm run build
 
 # ─── Stage 2: Serve ───────────────────────────────────────────

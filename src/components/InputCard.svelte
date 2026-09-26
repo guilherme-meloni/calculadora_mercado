@@ -1,5 +1,5 @@
 <script>
-  import { itemsActions, activeList } from '../lib/store.js'
+  import { itemsActions, activeList, bottomSheetContent, bottomSheetOpen, ultimoAdicionado } from '../lib/store.js'
   import { parsePrice } from '../lib/utils.js'
 
   const CATS = ['🛒','🥩','🥬','🥛','🧴','🍞','🧃','🧹','🐾']
@@ -8,8 +8,21 @@
   let preco = ''
   let focused = false
   let shake = false
+  let avisoTexto = null
+  let avisoTimeout
 
   $: isTemplate = $activeList?.isTemplate || false
+
+  $: if ($ultimoAdicionado) {
+    avisoTexto = `✅ ${$ultimoAdicionado.nome} adicionado à lista`
+    clearTimeout(avisoTimeout)
+    avisoTimeout = setTimeout(() => avisoTexto = null, 2500)
+  }
+
+  function abrirScanner() {
+    bottomSheetContent.set('scanner')
+    bottomSheetOpen.set(true)
+  }
 
   function add() {
     const p = parsePrice(preco)
@@ -34,6 +47,13 @@
 </script>
 
 <div class="card pop-in" class:focused class:shake>
+  {#if avisoTexto}
+    <p class="aviso-adicionado">{avisoTexto}</p>
+  {/if}
+
+  <button class="btn-scan" on:click={abrirScanner}>📷 Escanear código de barras</button>
+  <p class="ou">ou adicione manualmente</p>
+
   <div class="cats">
     {#each CATS as c}
       <button
@@ -109,37 +129,66 @@
     75%      { transform: translateX(4px); }
   }
 
-  .cats {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 18px;
-    overflow-x: auto;
-    scrollbar-width: none;
-    -webkit-overflow-scrolling: touch;
-    overscroll-behavior-x: contain;
-    scroll-snap-type: x mandatory;
-    padding: 4px 2px;
+  .aviso-adicionado {
+    background: var(--green, #6a9955);
+    color: var(--surface);
+    font-weight: 800;
+    font-size: 13px;
+    text-align: center;
+    padding: 10px;
+    border-radius: var(--radius-md);
+    margin-bottom: 10px;
   }
-  .cats::-webkit-scrollbar { display: none; }
+  .btn-scan {
+    width: 100%;
+    padding: 14px;
+    margin-bottom: 8px;
+    border-radius: var(--radius-lg);
+    border: 1.5px dashed var(--accent);
+    background: var(--surface2);
+    color: var(--accent);
+    font-family: inherit;
+    font-weight: 800;
+    font-size: 15px;
+    cursor: pointer;
+  }
+  .btn-scan:active { transform: scale(0.97); }
+  .ou {
+    text-align: center;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--text3);
+    margin: 0 0 14px;
+  }
+
+  .cats {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+    margin-bottom: 18px;
+  }
 
   .cat {
     background: var(--surface2);
     border: 1.5px solid var(--border);
     border-radius: 16px;
-    padding: 10px 14px;
+    padding: 10px 4px;
     font-size: 22px;
     cursor: pointer;
-    flex-shrink: 0;
     line-height: 1;
     transition: all 0.2s;
     -webkit-tap-highlight-color: transparent;
-    scroll-snap-align: start;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   .cat.active {
     border-color: var(--accent);
     background: var(--surface2);
     box-shadow: 0 0 0 3px rgba(194, 84, 110, 0.15);
-    transform: scale(1.1);
+    transform: scale(1.08);
   }
   .cat:active { transform: scale(0.9); }
 

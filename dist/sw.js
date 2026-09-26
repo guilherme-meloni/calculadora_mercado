@@ -1,37 +1,53 @@
-const CACHE_NAME = 'marketmallow-v1';
-const ASSETS = [
+const CACHE_NAME = 'marketmallow-v3';
+
+// Arquivos críticos para o app abrir
+const CORE_ASSETS = [
   '/',
   '/index.html',
-  '/favicon.png',
-  '/manifest.json'
+  '/manifest.json',
+  '/favicon.png'
 ];
 
-// Instalação: Cacheia arquivos estáticos básicos
 self.addEventListener('install', (event) => {
+  self.skipWaiting();
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(ASSETS);
-    })
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(CORE_ASSETS))
   );
 });
 
-// Ativação: Limpa caches antigos
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then((keys) => {
-      return Promise.all(
-        keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))
-      );
-    })
+    caches.keys().then((keys) => Promise.all(
+      keys.map((key) => {
+        if (key !== CACHE_NAME) return caches.delete(key);
+      })
+    ))
   );
+  self.clients.claim();
 });
 
-// Estratégia: Network First, falling back to cache
-// Como é uma calculadora de mercado, queremos o código mais novo, mas se estiver sem net, usa o cache.
 self.addEventListener('fetch', (event) => {
+  // Apenas intercepta requisições do próprio site (GET)
+  if (event.request.method !== 'GET' || !event.request.url.startsWith(self.location.origin)) {
+    return;
+  }
+
   event.respondWith(
-    fetch(event.request).catch(() => {
-      return caches.match(event.request);
+    caches.open(CACHE_NAME).then((cache) => {
+      return cache.match(event.request).then((cachedResponse) => {
+        // Tenta buscar na rede para atualizar o cache
+        const fetchPromise = fetch(event.request).then((networkResponse) => {
+          if (networkResponse && networkResponse.status === 200) {
+            cache.put(event.request, networkResponse.clone());
+          }
+          return networkResponse;
+        }).catch(() => {
+          // Se falhar (offline), não faz nada, o Promise.race ou o retorno do cache resolvem
+        });
+
+        // Retorna o que for mais rápido: o cache (se existir) ou a rede
+        return cachedResponse || fetchPromise;
+      });
     })
   );
 });

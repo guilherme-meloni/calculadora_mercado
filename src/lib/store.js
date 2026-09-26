@@ -291,10 +291,11 @@ function createAppStore() {
 export const appStore = createAppStore()
 
 // Navegação e UI
-export const activeView = writable('shopping') // 'shopping' | 'lists' | 'templates' | 'history'
+export const activeView = writable('home') // 'home' | 'calculadora' (calculadora = adicionar + ver o carrinho, junto)
 export const sortOrder = writable('default') // 'default' | 'name' | 'price-asc' | 'price-desc'
 export const bottomSheetOpen = writable(false)
 export const bottomSheetContent = writable(null) // 'lists' | 'templates' | 'history'
+export const ultimoAdicionado = writable(null) // { nome, ts } — pra mostrar aviso na Calculadora
 
 // Derived store para os itens da lista ativa (compatibilidade com componentes existentes)
 export const items = derived([appStore, sortOrder], ([$state, $sort]) => {
@@ -320,7 +321,10 @@ export const activeList = derived(appStore, $state => {
 
 // Derived para expor as funções de items (manter a interface items.add, etc)
 export const itemsActions = {
-  add: (nome, preco, cat) => appStore.addListItem(nome, preco, cat),
+  add: (nome, preco, cat) => {
+    appStore.addListItem(nome, preco, cat)
+    ultimoAdicionado.set({ nome, ts: Date.now() })
+  },
   changeQty: (id, delta) => appStore.changeQty(id, delta),
   remove: (id) => appStore.removeListItem(id),
   clear: () => appStore.clearCurrentList(),

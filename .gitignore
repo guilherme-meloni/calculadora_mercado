@@ -1,0 +1,135 @@
+# ─────────────────────────────────────────────
+#  MarketMallow — .gitignore
+#  O que fica no repo: código-fonte e config.
+#  O que NÃO fica: dependências, builds, segredos, lixo de SO.
+# ─────────────────────────────────────────────
+
+
+# ── Dependências ──────────────────────────────
+node_modules/
+.pnp
+.pnp.js
+.yarn/install-state.gz
+
+
+# ── Build / Dist ──────────────────────────────
+dist/
+dist-ssr/
+build/
+.svelte-kit/
+
+
+# ── Vite / Svelte cache ───────────────────────
+.vite/
+vite.config.js.timestamp-*
+*.local
+
+
+# ── Variáveis de ambiente e segredos ──────────
+# Nunca suba chaves, tokens ou configs de ambiente
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.*.local
+*.pem
+*.key
+*.cert
+*.p12
+
+
+# ── Docker volumes e dados locais ─────────────
+# Se você mapear volumes locais no docker-compose
+docker-data/
+.docker/
+
+
+# ── Logs ──────────────────────────────────────
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+
+# ── Editores e IDEs ───────────────────────────
+
+# VS Code (exceto configs de time que você queira compartilhar)
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/launch.json
+
+# JetBrains (WebStorm, IntelliJ)
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Vim / Neovim
+*.swp
+*.swo
+*~
+.netrwhist
+
+# Emacs
+\#*\#
+.\#*
+
+
+# ── Sistemas Operacionais ─────────────────────
+
+# macOS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+.AppleDouble
+.LSOverride
+Icon
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+
+# ── Testes e Coverage ─────────────────────────
+coverage/
+*.lcov
+.nyc_output/
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+
+
+# ── Ferramentas de análise / profiling ────────
+.clinic/
+*.cpuprofile
+*.heapsnapshot
+
+
+# ── Backups e arquivos temporários ────────────
+*.bak
+*.backup
+*.tmp
+*.temp
+*.orig
+*.rej
+

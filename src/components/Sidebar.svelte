@@ -2,20 +2,24 @@
   import ListsPanel from './panels/ListsPanel.svelte';
   import TemplatesPanel from './panels/TemplatesPanel.svelte';
   import HistoryPanel from './panels/HistoryPanel.svelte';
+  import ScannerPanel from './panels/ScannerPanel.svelte';
+  import ProductsPanel from './panels/ProductsPanel.svelte';
 
-  let openSection = 'lists'; // 'lists' | 'templates' | 'history'
+  let openSection = 'lists'; // 'lists' | 'templates' | 'history' | 'scanner' | 'products'
 </script>
 
 <div class="sidebar-inner">
   <div class="sidebar-logo">
-    <span>🍬</span>
+    <img src="/favicon.png" alt="MarketMallow" class="sidebar-logo-img" />
     <h1>MarketMallow</h1>
   </div>
 
   {#each [
+    { key: 'scanner',   title: '📷 Escanear',        component: ScannerPanel },
     { key: 'lists',     title: '📋 Minhas Listas',    component: ListsPanel },
     { key: 'templates', title: '⭐ Templates',  component: TemplatesPanel },
     { key: 'history',   title: '🕐 Histórico', component: HistoryPanel },
+    { key: 'products',  title: '📦 Produtos',  component: ProductsPanel },
   ] as section}
     <div class="sidebar-section">
       <button
@@ -43,7 +47,7 @@
   border-bottom: 2px solid var(--border);
   margin-bottom: 8px;
 }
-.sidebar-logo span { font-size: 1.5rem; }
+.sidebar-logo-img { width: 32px; height: 32px; border-radius: 9px; object-fit: cover; }
 .sidebar-logo h1 { font-size: 1.1rem; font-weight: 900; color: var(--text); margin: 0; }
 
 .sidebar-section {

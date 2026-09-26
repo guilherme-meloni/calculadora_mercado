@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   calculadora:
     build:
@@ -11,3 +9,15 @@ services:
       - "3019:80"
     environment:
       - NODE_ENV=production
+    depends_on:
+      - mercado-api
+
+  mercado-api:
+    build:
+      context: ./mercado-api
+    container_name: mercado-api
+    restart: unless-stopped
+    ports:
+      - "3011:3011"
+    volumes:
+      - ./mercado-api/data:/app/data

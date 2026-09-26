@@ -3,11 +3,15 @@
   import ListsPanel     from './panels/ListsPanel.svelte';
   import TemplatesPanel from './panels/TemplatesPanel.svelte';
   import HistoryPanel   from './panels/HistoryPanel.svelte';
+  import ScannerPanel   from './panels/ScannerPanel.svelte';
+  import ProductsPanel  from './panels/ProductsPanel.svelte';
 
   const panels = {
     lists:     { title: '📋 Minhas Listas',  comp: ListsPanel     },
     templates: { title: '⭐ Templates',       comp: TemplatesPanel },
     history:   { title: '🕐 Histórico',      comp: HistoryPanel   },
+    scanner:   { title: '📷 Escanear',        comp: ScannerPanel   },
+    products:  { title: '📦 Produtos',        comp: ProductsPanel  },
   };
 
   $: panel = panels[$bottomSheetContent] ?? null;
